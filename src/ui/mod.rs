@@ -9,17 +9,18 @@ use gio::{
 };
 use gtk;
 use gtk::{
-    FileChooserAction, FileChooserExt, FileChooserNative, GtkApplicationExt, GtkWindowExt,
-    NativeDialogExt, WidgetExt,
+    ContainerExt, FileChooserAction, FileChooserExt, FileChooserNative, GtkApplicationExt,
+    GtkWindowExt, NativeDialogExt, WidgetExt,
 };
 
 mod canvas;
 use self::canvas::Canvas;
+mod drawing_area;
 
 #[derive(Clone, Debug)]
-struct State {
-    open_file: RefCell<Option<PathBuf>>,
-    canvas: RefCell<Canvas>,
+pub struct State {
+    pub open_file: RefCell<Option<PathBuf>>,
+    pub canvas: RefCell<Canvas>,
 }
 
 fn build_menu(app: &gtk::Application) {
@@ -124,6 +125,9 @@ pub fn build(app: &gtk::Application) {
 
     window.set_title("Monotile");
     window.set_default_size(300, 300);
+
+    let drawing_area = drawing_area::build(&state);
+    window.add(&drawing_area);
 
     window.show_all();
 }

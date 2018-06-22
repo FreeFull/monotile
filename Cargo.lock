@@ -223,6 +223,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "monotile"
 version = "0.1.0"
 dependencies = [
+ "cairo-rs 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "gio 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "gtk 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

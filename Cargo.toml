@@ -5,6 +5,7 @@ authors = ["Filip Szczepański <jazz2rulez@gmail.com>"]
 
 [dependencies]
 gio = "0.4.1"
+cairo-rs = "0.4.1"
 
 [dependencies.gtk]
 version = "0.4.1"
