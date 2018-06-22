@@ -1,8 +1,12 @@
 use std::cell::RefCell;
+use std::path::PathBuf;
 use std::rc::Rc;
 
 use gio;
-use gio::{ActionMapExt, ApplicationExt, ApplicationExtManual, FileExt, MenuExt, SimpleActionExt};
+use gio::{
+    ActionGroupExt, ActionMapExt, ApplicationExt, ApplicationExtManual, FileExt, MenuExt,
+    SimpleActionExt,
+};
 use gtk;
 use gtk::{
     FileChooserAction, FileChooserExt, FileChooserNative, GtkApplicationExt, GtkWindowExt,
@@ -12,8 +16,9 @@ use gtk::{
 mod canvas;
 use self::canvas::Canvas;
 
+#[derive(Clone, Debug)]
 struct State {
-    open_file: RefCell<Option<gio::File>>,
+    open_file: RefCell<Option<PathBuf>>,
     canvas: RefCell<Canvas>,
 }
 
@@ -33,9 +38,11 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
     let new = gio::SimpleAction::new("new", None);
     new.connect_activate({
         let state = state.clone();
+        let app = app.clone();
         move |_, _| {
             state.open_file.replace(None);
             state.canvas.replace(Canvas::default());
+            app.activate_action("file_changed", None);
         }
     });
 
@@ -78,11 +85,20 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
         }
     });
 
+    let file_changed = gio::SimpleAction::new("file_changed", None);
+    file_changed.connect_activate({
+        let state = state.clone();
+        move |_, _| {
+            println!("{:?}", state.open_file);
+        }
+    });
+
     app.add_action(&new);
     app.add_action(&open);
     app.add_action(&save);
     app.add_action(&saveas);
     app.add_action(&quit);
+    app.add_action(&file_changed);
 }
 
 pub fn build(app: &gtk::Application) {
@@ -95,9 +111,10 @@ pub fn build(app: &gtk::Application) {
 
     app.connect_open({
         let state = state.clone();
-        move |_app, files, hint| {
-            state.open_file.replace(Some(files[0].clone()));
-            println!("{:?} {:?}", files[0].get_path(), hint);
+        move |app, files, _hint| {
+            let path = files[0].get_path().expect("get_path failed");
+            state.open_file.replace(Some(path));
+            app.activate_action("file_changed", None);
         }
     });
 

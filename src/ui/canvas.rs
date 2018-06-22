@@ -1,6 +1,6 @@
 use std::default::Default;
 
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Canvas {
     width: usize,
     height: usize,
@@ -23,7 +23,7 @@ impl Default for Canvas {
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Tile {
     pub index: u8,
     pub fg: u32,
