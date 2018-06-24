@@ -1,9 +1,11 @@
+use std::rc::Rc;
+
 use gtk;
 use gtk::prelude::*;
 
 use ui::State;
 
-pub fn build(state: &State) -> gtk::DrawingArea {
+pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
     let area = gtk::DrawingArea::new();
     let (width, height) = state.canvas.borrow().size();
     let (width, height) = (width * 8, height * 8);

@@ -14,6 +14,7 @@ impl Canvas {
         for (i, tile) in tiles.iter_mut().enumerate() {
             tile.index = i as u8;
             tile.bg = Color::rgb(i as f64 / len, 0.0, 0.0);
+            tile.fg = Color::rgb(1.0, 1.0, 1.0);
         }
         Canvas {
             width,

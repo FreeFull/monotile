@@ -18,7 +18,7 @@ use self::canvas::Canvas;
 mod drawing_area;
 mod tileset;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct State {
     pub open_file: RefCell<Option<PathBuf>>,
     pub canvas: RefCell<Canvas>,
