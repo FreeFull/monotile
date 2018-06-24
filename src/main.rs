@@ -1,6 +1,7 @@
 extern crate cairo;
 extern crate gio;
 extern crate gtk;
+extern crate image;
 
 use gio::prelude::*;
 use gio::ApplicationFlags;

@@ -16,11 +16,13 @@ use gtk::{
 mod canvas;
 use self::canvas::Canvas;
 mod drawing_area;
+mod tileset;
 
 #[derive(Clone, Debug)]
 pub struct State {
     pub open_file: RefCell<Option<PathBuf>>,
     pub canvas: RefCell<Canvas>,
+    pub tileset: tileset::Tileset,
 }
 
 fn build_menu(app: &gtk::Application) {
@@ -108,6 +110,7 @@ pub fn build(app: &gtk::Application) {
     let state: Rc<State> = Rc::new(State {
         open_file: RefCell::new(None),
         canvas: RefCell::new(Canvas::new(32, 32)),
+        tileset: tileset::Tileset::new(),
     });
 
     app.connect_open({
