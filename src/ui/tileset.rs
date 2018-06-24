@@ -6,8 +6,8 @@ use image::{self, GenericImage};
 use ui::canvas::Tile;
 
 const TILESET_IMAGE: &'static [u8] = include_bytes!("../../data/tiles.gif");
-const WIDTH: u8 = 16;
-const HEIGHT: u8 = 16;
+pub const WIDTH: u8 = 16;
+pub const HEIGHT: u8 = 16;
 
 pub struct Tileset {
     pattern: cairo::SurfacePattern,

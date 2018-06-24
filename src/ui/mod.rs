@@ -10,12 +10,13 @@ use gio::{
 use gtk;
 use gtk::{
     ContainerExt, FileChooserAction, FileChooserExt, FileChooserNative, GtkApplicationExt,
-    GtkWindowExt, NativeDialogExt, WidgetExt,
+    GtkWindowExt, NativeDialogExt, Orientation, WidgetExt,
 };
 
 mod canvas;
-use self::canvas::Canvas;
+use self::canvas::{Canvas, Color, Tile};
 mod drawing_area;
+mod tile_chooser;
 mod tileset;
 
 #[derive(Debug)]
@@ -23,6 +24,7 @@ pub struct State {
     pub open_file: RefCell<Option<PathBuf>>,
     pub canvas: RefCell<Canvas>,
     pub tileset: tileset::Tileset,
+    pub current_tile: RefCell<Tile>,
 }
 
 fn build_menu(app: &gtk::Application) {
@@ -111,6 +113,11 @@ pub fn build(app: &gtk::Application) {
         open_file: RefCell::new(None),
         canvas: RefCell::new(Canvas::new(32, 32)),
         tileset: tileset::Tileset::new(),
+        current_tile: RefCell::new(Tile {
+            index: 0,
+            fg: Color::rgb(1.0, 1.0, 1.0),
+            bg: Color::rgb(0.0, 0.0, 0.0),
+        }),
     });
 
     app.connect_open({
@@ -129,8 +136,16 @@ pub fn build(app: &gtk::Application) {
     window.set_title("Monotile");
     window.set_default_size(300, 300);
 
+    let app_box = gtk::Box::new(Orientation::Vertical, 0);
+    let main_area = gtk::Box::new(Orientation::Horizontal, 2);
+    app_box.add(&main_area);
+
     let drawing_area = drawing_area::build(&state);
-    window.add(&drawing_area);
+    let tile_chooser = tile_chooser::build(&state);
+    main_area.add(&drawing_area);
+    main_area.add(&tile_chooser);
+
+    window.add(&app_box);
 
     window.show_all();
 }

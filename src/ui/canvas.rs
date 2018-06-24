@@ -9,17 +9,10 @@ pub struct Canvas {
 
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Canvas {
-        let mut tiles = vec![Tile::default(); width * height];
-        let len = tiles.len() as f64;
-        for (i, tile) in tiles.iter_mut().enumerate() {
-            tile.index = (i % 16 + (i / 32) * 16) as u8;
-            tile.bg = Color::rgb(i as f64 / len, 0.0, 0.0);
-            tile.fg = Color::rgb(1.0, 1.0, 1.0);
-        }
         Canvas {
             width,
             height,
-            tiles,
+            tiles: vec![Tile::default(); width * height],
         }
     }
 
