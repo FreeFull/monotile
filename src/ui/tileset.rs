@@ -6,6 +6,8 @@ use image::{self, GenericImage};
 use ui::canvas::Tile;
 
 const TILESET_IMAGE: &'static [u8] = include_bytes!("../../data/tiles.gif");
+const WIDTH: u8 = 16;
+const HEIGHT: u8 = 16;
 
 pub struct Tileset {
     pattern: cairo::SurfacePattern,
@@ -37,12 +39,18 @@ impl Tileset {
     #[inline]
     pub fn draw_tile(&self, cr: &cairo::Context, x: usize, y: usize, tile: &Tile) {
         cr.save();
+        cr.translate(x as f64 * 8.0, y as f64 * 8.0);
         let bg = tile.bg;
         let fg = tile.fg;
-        cr.rectangle(x as f64 * 8.0, y as f64 * 8.0, 8.0, 8.0);
+        cr.rectangle(0.0, 0.0, 8.0, 8.0);
+        cr.clip();
         cr.set_source_rgb(bg.r, bg.g, bg.b);
-        cr.fill();
+        cr.paint();
         cr.set_source_rgb(fg.r, fg.g, fg.b);
+        cr.translate(
+            -((tile.index % WIDTH) as f64) * 8.0,
+            -((tile.index / WIDTH) as f64) * 8.0,
+        );
         cr.mask(&self.pattern);
         cr.fill();
         cr.restore();
