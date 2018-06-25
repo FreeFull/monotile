@@ -1,4 +1,5 @@
 extern crate cairo;
+extern crate gdk;
 extern crate gio;
 extern crate gtk;
 extern crate image;

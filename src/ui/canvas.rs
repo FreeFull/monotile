@@ -35,6 +35,13 @@ impl Canvas {
             .enumerate()
             .map(move |(i, tile)| (i % width, i / width, tile))
     }
+
+    pub fn set_tile(&mut self, x: usize, y: usize, tile: Tile) {
+        if x >= self.width || y >= self.height {
+            return;
+        }
+        self.tiles[x + y*self.width] = tile;
+    }
 }
 
 impl Default for Canvas {

@@ -7,6 +7,8 @@ use ui::canvas::Tile;
 use ui::tileset;
 use ui::State;
 
+const SCALE: f64 = 2.0;
+
 pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
     let area = gtk::DrawingArea::new();
     let (width, height) = (tileset::WIDTH, tileset::HEIGHT);
@@ -18,8 +20,8 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
             let current_tile = state.current_tile.borrow().clone();
             let fg = current_tile.fg;
             let bg = current_tile.bg;
-            cr.translate(2.0, 2.0);
-            cr.scale(2.0, 2.0);
+            cr.scale(SCALE, SCALE);
+            cr.translate(1.0, 1.0);
             cr.set_source_rgb(0.0, 0.0, 0.0);
             cr.paint();
             for i in 0..256 {
