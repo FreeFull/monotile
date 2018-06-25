@@ -28,14 +28,6 @@ impl Canvas {
             .map(move |(i, tile)| (i % width, i / width, tile))
     }
 
-    pub fn tiles_mut(&mut self) -> impl Iterator<Item = (usize, usize, &mut Tile)> {
-        let width = self.width;
-        self.tiles
-            .iter_mut()
-            .enumerate()
-            .map(move |(i, tile)| (i % width, i / width, tile))
-    }
-
     pub fn set_tile(&mut self, x: usize, y: usize, tile: Tile) {
         if x >= self.width || y >= self.height {
             return;

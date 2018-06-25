@@ -3,7 +3,7 @@ use std::rc::Rc;
 use gtk;
 use gtk::prelude::*;
 
-use gdk::{EventButton, EventMask, EventMotion, WindowExt};
+use gdk::{EventButton, EventMask, WindowExt};
 
 use ui::State;
 
