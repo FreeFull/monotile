@@ -15,8 +15,8 @@ use gtk::{
 
 mod canvas;
 use self::canvas::{Canvas, Color, Tile};
-mod drawing_area;
-mod tile_chooser;
+mod components;
+use self::components::*;
 mod tileset;
 
 #[derive(Debug)]
