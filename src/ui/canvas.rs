@@ -1,5 +1,7 @@
 use std::default::Default;
 
+use gdk;
+
 #[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Canvas {
     width: usize,
@@ -60,5 +62,27 @@ pub struct Color {
 impl Color {
     pub fn rgb(r: f64, g: f64, b: f64) -> Color {
         Color { r, g, b, a: 1.0 }
+    }
+}
+
+impl From<gdk::RGBA> for Color {
+    fn from(rgba: gdk::RGBA) -> Color {
+        Color {
+            r: rgba.red,
+            g: rgba.green,
+            b: rgba.blue,
+            a: rgba.alpha,
+        }
+    }
+}
+
+impl From<Color> for gdk::RGBA {
+    fn from(color: Color) -> gdk::RGBA {
+        gdk::RGBA {
+            red: color.r,
+            green: color.g,
+            blue: color.b,
+            alpha: color.a,
+        }
     }
 }
