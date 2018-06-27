@@ -48,8 +48,6 @@ fn pressed(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventButton) -> I
         .canvas
         .borrow_mut()
         .set_tile(x as usize, y as usize, tile);
-    if let Some(window) = area.get_window() {
-        window.invalidate_rect(None, false);
-    }
+    area.queue_draw();
     Inhibit(true)
 }
