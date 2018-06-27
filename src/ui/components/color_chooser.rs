@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use gtk::prelude::*;
-use gtk::{self, ColorButton, Grid, Label};
+use gtk::{ColorButton, Grid, Label};
 
 use gdk;
 use gdk::prelude::*;
