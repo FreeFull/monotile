@@ -137,13 +137,19 @@ pub fn build(app: &gtk::Application) {
     window.set_default_size(300, 300);
 
     let app_box = gtk::Box::new(Orientation::Vertical, 0);
+    app_box.set_border_width(3);
     let main_area = gtk::Box::new(Orientation::Horizontal, 2);
     app_box.add(&main_area);
+    let side_bar = gtk::Box::new(Orientation::Vertical, 2);
 
     let drawing_area = drawing_area::build(&state);
-    let tile_chooser = tile_chooser::build(&state);
     main_area.add(&drawing_area);
-    main_area.add(&tile_chooser);
+    main_area.add(&side_bar);
+
+    let tile_chooser = tile_chooser::build(&state);
+    let color_chooser = color_chooser::build(&state);
+    side_bar.add(&tile_chooser);
+    side_bar.add(&color_chooser);
 
     window.add(&app_box);
 
