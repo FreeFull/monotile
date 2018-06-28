@@ -2,16 +2,10 @@ use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
 
-use gio;
-use gio::{
-    ActionGroupExt, ActionMapExt, ApplicationExt, ApplicationExtManual, FileExt, MenuExt,
-    SimpleActionExt,
-};
-use gtk;
-use gtk::{
-    ContainerExt, FileChooserAction, FileChooserExt, FileChooserNative, GtkApplicationExt,
-    GtkWindowExt, NativeDialogExt, Orientation, WidgetExt,
-};
+use gio::prelude::*;
+use gio::{self, MenuExt};
+use gtk::prelude::*;
+use gtk::{self, FileChooserAction, FileChooserNative, Orientation};
 
 mod canvas;
 use self::canvas::{Canvas, Color, Tile};
