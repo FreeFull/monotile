@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
 
+use gdk::WindowExt;
 use gio::prelude::*;
 use gio::{self, MenuExt};
 use gtk::prelude::*;
@@ -87,8 +88,12 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
     let file_changed = gio::SimpleAction::new("file_changed", None);
     file_changed.connect_activate({
         let state = state.clone();
+        let window = window.clone();
         move |_, _| {
             println!("{:?}", state.open_file);
+            window
+                .get_window()
+                .map(|window| window.invalidate_rect(None, true));
         }
     });
 
