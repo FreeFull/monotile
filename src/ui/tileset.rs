@@ -1,6 +1,6 @@
 use std::fmt;
 
-use cairo::{self, Pattern};
+use cairo::{self, Pattern, PatternTrait};
 use image::{self, GenericImage};
 
 use ui::canvas::Tile;
@@ -10,7 +10,7 @@ pub const WIDTH: u8 = 16;
 pub const HEIGHT: u8 = 16;
 
 pub struct Tileset {
-    pattern: cairo::SurfacePattern,
+    pattern: cairo::Pattern,
 }
 
 impl fmt::Debug for Tileset {
@@ -33,7 +33,7 @@ impl Tileset {
             .copy_from_slice(&*image.to_luma());
         let pattern = cairo::SurfacePattern::create(&surface);
         pattern.set_filter(cairo::Filter::Nearest);
-        Tileset { pattern }
+        Tileset { pattern: Pattern::SurfacePattern(pattern) }
     }
 
     #[inline]

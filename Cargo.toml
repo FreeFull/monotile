@@ -4,11 +4,11 @@ version = "0.1.0"
 authors = ["Filip Szczepański <jazz2rulez@gmail.com>"]
 
 [dependencies]
-gio = "0.4.1"
-cairo-rs = "0.4.1"
+gio = { git = "https://github.com/gtk-rs/gio.git" }
+cairo-rs = { git = "https://github.com/gtk-rs/cairo.git" }
 image = "0.19.0"
-gdk = "0.8.0"
+gdk = { git = "https://github.com/gtk-rs/gdk.git" }
 
 [dependencies.gtk]
-version = "0.4.1"
+git = "https://github.com/gtk-rs/gtk.git"
 features = ["v3_22"]
