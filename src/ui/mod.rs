@@ -18,6 +18,7 @@ mod tileset;
 pub struct State {
     pub open_file: RefCell<Option<PathBuf>>,
     pub canvas: RefCell<Canvas>,
+    pub canvas_cursor_position: RefCell<Option<(u32, u32)>>,
     pub tileset: tileset::Tileset,
     pub current_tile: RefCell<Tile>,
 }
@@ -111,6 +112,7 @@ pub fn build(app: &gtk::Application) {
     let state: Rc<State> = Rc::new(State {
         open_file: RefCell::new(None),
         canvas: RefCell::new(Canvas::new(32, 32)),
+        canvas_cursor_position: RefCell::new(None),
         tileset: tileset::Tileset::new(),
         current_tile: RefCell::new(Tile {
             index: 0,
