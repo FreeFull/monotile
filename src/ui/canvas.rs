@@ -44,11 +44,21 @@ impl Default for Canvas {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct Tile {
     pub index: u8,
     pub fg: Color,
     pub bg: Color,
+}
+
+impl Default for Tile {
+    fn default() -> Tile {
+        Tile {
+            index: 32,
+            fg: Color::default(),
+            bg: Color::default(),
+        }
+    }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
