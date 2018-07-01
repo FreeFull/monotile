@@ -34,7 +34,7 @@ impl Canvas {
         if x >= self.width || y >= self.height {
             return;
         }
-        self.tiles[x + y*self.width] = tile;
+        self.tiles[x + y * self.width] = tile;
     }
 }
 

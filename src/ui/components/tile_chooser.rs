@@ -67,7 +67,7 @@ fn pressed(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventButton) -> I
     y = y.max(0.0);
     y = y.min(15.0);
     let (x, y) = (x as u8, y as u8);
-    tile.index = x + y*16;
+    tile.index = x + y * 16;
     area.queue_draw();
     Inhibit(true)
 }
