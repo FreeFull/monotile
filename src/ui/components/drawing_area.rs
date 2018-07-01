@@ -30,6 +30,10 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
             for (x, y, tile) in canvas.tiles() {
                 state.tileset.draw_tile(&cr, x, y, tile);
             }
+            if let Some((x, y)) = state.canvas_cursor_position.borrow().clone() {
+                let tile = state.current_tile.borrow().clone();
+                state.tileset.draw_tile_alpha(&cr, x, y, &tile, 0.5);
+            }
             Inhibit(false)
         }
     });
@@ -99,7 +103,7 @@ fn mouse_event(
     y = y.min(max_y as f64);
     state
         .canvas_cursor_position
-        .replace(Some((x as u32, y as u32)));
+        .replace(Some((x as usize, y as usize)));
     area.queue_draw();
 }
 

@@ -18,7 +18,7 @@ mod tileset;
 pub struct State {
     pub open_file: RefCell<Option<PathBuf>>,
     pub canvas: RefCell<Canvas>,
-    pub canvas_cursor_position: RefCell<Option<(u32, u32)>>,
+    pub canvas_cursor_position: RefCell<Option<(usize, usize)>>,
     pub tileset: tileset::Tileset,
     pub current_tile: RefCell<Tile>,
 }
