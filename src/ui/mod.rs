@@ -5,13 +5,15 @@ use std::rc::Rc;
 use gdk::WindowExt;
 use gio::prelude::*;
 use gio::{self, MenuExt};
+use glib::translate::ToGlib;
 use gtk::prelude::*;
-use gtk::{self, FileChooserAction, FileChooserNative, Orientation};
+use gtk::{self, FileChooserAction, FileChooserNative, FileFilter, Orientation};
 
 mod canvas;
 use self::canvas::{Canvas, Color, Tile};
 mod components;
 use self::components::*;
+mod file_formats;
 mod tileset;
 
 #[derive(Debug)]
@@ -55,10 +57,19 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
             let dialog =
                 FileChooserNative::new(None, Some(&window), FileChooserAction::Open, None, None);
             dialog.set_show_hidden(false);
+
+            let filter = FileFilter::new();
+            FileFilterExt::set_name(&filter, "Monotile file");
+            filter.add_pattern("*.monti");
+            dialog.add_filter(&filter);
+
             let app = app.clone();
-            dialog.connect_response(move |dialog, _resp| {
-                if let Some(filename) = dialog.get_filename() {
-                    app.open(&[gio::File::new_for_path(filename)], "");
+            dialog.connect_response(move |dialog, resp| {
+                if resp == gtk::ResponseType::Accept.to_glib() {
+                    let files = dialog.get_files();
+                    if files.len() > 0 {
+                        app.open(&files, "");
+                    }
                 }
             });
             dialog.run();
@@ -67,14 +78,68 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
 
     let save = gio::SimpleAction::new("save", None);
     save.connect_activate({
-        move |_, _| {
-            println!("save");
+        let state = state.clone();
+        let app = app.clone();
+        move |_, _| match *state.open_file.borrow() {
+            Some(ref path) => {
+                let canvas = state.canvas.borrow();
+                match file_formats::save(&path, &canvas) {
+                    Ok(_) => {}
+                    Err(err) => println!("save failed: {}", err),
+                }
+            }
+            None => {
+                app.activate_action("saveas", None);
+            }
         }
     });
     let saveas = gio::SimpleAction::new("saveas", None);
     saveas.connect_activate({
+        let app = app.clone();
+        let state = state.clone();
+        let window = window.clone();
         move |_, _| {
-            println!("save as");
+            let dialog =
+                FileChooserNative::new(None, Some(&window), FileChooserAction::Save, None, None);
+
+            if let Some(ref file) = *state.open_file.borrow() {
+                let file = gio::File::new_for_path(file);
+                dialog.set_file(&file).ok();
+            } else {
+                dialog.set_current_name("Untitled.monti");
+            }
+            dialog.set_do_overwrite_confirmation(true);
+
+            let filter = FileFilter::new();
+            FileFilterExt::set_name(&filter, "Monotile file");
+            filter.add_pattern("*.monti");
+            dialog.add_filter(&filter);
+
+            dialog.connect_response({
+                let app = app.clone();
+                let state = state.clone();
+                move |dialog, resp| {
+                    if resp == gtk::ResponseType::Accept.to_glib() {
+                        let files = dialog.get_files();
+                        if files.len() < 1 {
+                            return;
+                        }
+                        if let Some(path) = files[0].get_path() {
+                            let canvas = state.canvas.borrow();
+                            match file_formats::save(&path, &canvas) {
+                                Ok(_) => {
+                                    state.open_file.replace(Some(path.clone()));
+                                    app.activate_action("file_changed", None);
+                                }
+                                Err(err) => println!("Failed to save as: {}", err),
+                            }
+                        } else {
+                            eprintln!("Failed to get path for file");
+                        }
+                    }
+                }
+            });
+            dialog.run();
         }
     });
 
@@ -91,7 +156,6 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
         let state = state.clone();
         let window = window.clone();
         move |_, _| {
-            println!("{:?}", state.open_file);
             window
                 .get_window()
                 .map(|window| window.invalidate_rect(None, true));
@@ -125,8 +189,16 @@ pub fn build(app: &gtk::Application) {
         let state = state.clone();
         move |app, files, _hint| {
             let path = files[0].get_path().expect("get_path failed");
-            state.open_file.replace(Some(path));
-            app.activate_action("file_changed", None);
+            match file_formats::load(&path) {
+                Ok(canvas) => {
+                    state.canvas.replace(canvas);
+                    state.open_file.replace(Some(path));
+                    app.activate_action("file_changed", None);
+                }
+                Err(err) => {
+                    println!("Opening file failed: {}", err);
+                }
+            }
         }
     });
 

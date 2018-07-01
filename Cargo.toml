@@ -8,6 +8,10 @@ gio = { git = "https://github.com/gtk-rs/gio.git" }
 cairo-rs = { git = "https://github.com/gtk-rs/cairo.git" }
 image = "0.19.0"
 gdk = { git = "https://github.com/gtk-rs/gdk.git" }
+glib = { git = "https://github.com/gtk-rs/glib.git" }
+serde = "1.0.69"
+serde_json = "1.0.22"
+serde_derive = "1.0.69"
 
 [dependencies.gtk]
 git = "https://github.com/gtk-rs/gtk.git"

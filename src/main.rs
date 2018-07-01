@@ -1,8 +1,13 @@
 extern crate cairo;
 extern crate gdk;
 extern crate gio;
+extern crate glib;
 extern crate gtk;
 extern crate image;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 
 use gio::prelude::*;
 use gio::ApplicationFlags;

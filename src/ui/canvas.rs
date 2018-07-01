@@ -36,6 +36,11 @@ impl Canvas {
         }
         self.tiles[x + y * self.width] = tile;
     }
+
+    pub fn set_all_tiles(&mut self, tiles: Vec<Tile>) {
+        assert_eq!(tiles.len(), self.width * self.height);
+        self.tiles = tiles;
+    }
 }
 
 impl Default for Canvas {
@@ -72,6 +77,18 @@ pub struct Color {
 impl Color {
     pub fn rgb(r: f64, g: f64, b: f64) -> Color {
         Color { r, g, b, a: 1.0 }
+    }
+
+    pub fn rgba(r: f64, g: f64, b: f64, a: f64) -> Color {
+        Color { r, g, b, a }
+    }
+
+    pub fn to_argb(&self) -> u32 {
+        let r = (self.r * 255.0) as u32;
+        let g = (self.g * 255.0) as u32;
+        let b = (self.b * 255.0) as u32;
+        let a = (self.a * 255.0) as u32;
+        (a << 24) | (r << 16) | (g << 8) | b
     }
 }
 
