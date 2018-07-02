@@ -3,9 +3,9 @@ use std::rc::Rc;
 use gtk;
 use gtk::prelude::*;
 
+use gdk::prelude::*;
 use gdk::{EventButton, EventMask, EventMotion, ModifierType};
 
-use ui::canvas::Tile;
 use ui::State;
 
 const SCALE: f64 = 2.0;
@@ -86,14 +86,12 @@ fn mouse_event(
             .borrow_mut()
             .set_tile(x as usize, y as usize, tile);
     } else if modifiers.contains(ModifierType::BUTTON3_MASK) {
-        let tile = Tile {
-            index: b' ',
-            ..tile
-        };
+        let tile = state.canvas.borrow().get_tile(x as usize, y as usize);
+        state.current_tile.replace(tile);
         state
-            .canvas
-            .borrow_mut()
-            .set_tile(x as usize, y as usize, tile);
+            .window
+            .get_window()
+            .map(|window| window.invalidate_rect(None, true));
     }
     let (max_x, max_y) = state.canvas.borrow().size();
     let (mut x, mut y) = (x, y);

@@ -1,5 +1,4 @@
 use std::cell::RefCell;
-use std::path::PathBuf;
 use std::rc::Rc;
 
 use gdk::WindowExt;
@@ -14,16 +13,9 @@ use self::canvas::{Canvas, Color, Tile};
 mod components;
 use self::components::*;
 mod file_formats;
+mod state;
 mod tileset;
-
-#[derive(Debug)]
-pub struct State {
-    pub open_file: RefCell<Option<PathBuf>>,
-    pub canvas: RefCell<Canvas>,
-    pub canvas_cursor_position: RefCell<Option<(usize, usize)>>,
-    pub tileset: tileset::Tileset,
-    pub current_tile: RefCell<Tile>,
-}
+pub use self::state::State;
 
 fn build_menu(app: &gtk::Application) {
     let menu = gio::Menu::new();
@@ -37,22 +29,21 @@ fn build_menu(app: &gtk::Application) {
     app.set_app_menu(&menu);
 }
 
-fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &Rc<State>) {
+fn add_actions(state: &Rc<State>) {
     let new = gio::SimpleAction::new("new", None);
     new.connect_activate({
         let state = state.clone();
-        let app = app.clone();
         move |_, _| {
             state.open_file.replace(None);
             state.canvas.replace(Canvas::default());
-            app.activate_action("file_changed", None);
+            state.app.activate_action("file_changed", None);
         }
     });
 
     let open = gio::SimpleAction::new("open", None);
     open.connect_activate({
-        let app = app.clone();
-        let window = window.clone();
+        let app = state.app.clone();
+        let window = state.window.clone();
         move |_, _| {
             let dialog =
                 FileChooserNative::new(None, Some(&window), FileChooserAction::Open, None, None);
@@ -79,7 +70,6 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
     let save = gio::SimpleAction::new("save", None);
     save.connect_activate({
         let state = state.clone();
-        let app = app.clone();
         move |_, _| match *state.open_file.borrow() {
             Some(ref path) => {
                 let canvas = state.canvas.borrow();
@@ -89,18 +79,21 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
                 }
             }
             None => {
-                app.activate_action("saveas", None);
+                state.app.activate_action("saveas", None);
             }
         }
     });
     let saveas = gio::SimpleAction::new("saveas", None);
     saveas.connect_activate({
-        let app = app.clone();
         let state = state.clone();
-        let window = window.clone();
         move |_, _| {
-            let dialog =
-                FileChooserNative::new(None, Some(&window), FileChooserAction::Save, None, None);
+            let dialog = FileChooserNative::new(
+                None,
+                Some(&state.window),
+                FileChooserAction::Save,
+                None,
+                None,
+            );
 
             if let Some(ref file) = *state.open_file.borrow() {
                 let file = gio::File::new_for_path(file);
@@ -116,7 +109,6 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
             dialog.add_filter(&filter);
 
             dialog.connect_response({
-                let app = app.clone();
                 let state = state.clone();
                 move |dialog, resp| {
                     if resp == gtk::ResponseType::Accept.to_glib() {
@@ -129,7 +121,7 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
                             match file_formats::save(&path, &canvas) {
                                 Ok(_) => {
                                     state.open_file.replace(Some(path.clone()));
-                                    app.activate_action("file_changed", None);
+                                    state.app.activate_action("file_changed", None);
                                 }
                                 Err(err) => println!("Failed to save as: {}", err),
                             }
@@ -145,7 +137,7 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
 
     let quit = gio::SimpleAction::new("quit", None);
     quit.connect_activate({
-        let app = app.clone();
+        let app = state.app.clone();
         move |_, _| {
             app.quit();
         }
@@ -154,26 +146,30 @@ fn add_actions(app: &gtk::Application, window: &gtk::ApplicationWindow, state: &
     let file_changed = gio::SimpleAction::new("file_changed", None);
     file_changed.connect_activate({
         let state = state.clone();
-        let window = window.clone();
         move |_, _| {
-            window
+            state
+                .window
                 .get_window()
                 .map(|window| window.invalidate_rect(None, true));
         }
     });
 
-    app.add_action(&new);
-    app.add_action(&open);
-    app.add_action(&save);
-    app.add_action(&saveas);
-    app.add_action(&quit);
-    app.add_action(&file_changed);
+    state.app.add_action(&new);
+    state.app.add_action(&open);
+    state.app.add_action(&save);
+    state.app.add_action(&saveas);
+    state.app.add_action(&quit);
+    state.app.add_action(&file_changed);
 }
 
 pub fn build(app: &gtk::Application) {
     build_menu(app);
 
+    let window = gtk::ApplicationWindow::new(app);
+
     let state: Rc<State> = Rc::new(State {
+        app: app.clone(),
+        window: window.clone(),
         open_file: RefCell::new(None),
         canvas: RefCell::new(Canvas::new(32, 32)),
         canvas_cursor_position: RefCell::new(None),
@@ -202,9 +198,7 @@ pub fn build(app: &gtk::Application) {
         }
     });
 
-    let window = gtk::ApplicationWindow::new(app);
-
-    add_actions(app, &window, &state);
+    add_actions(&state);
 
     window.set_title("Monotile");
     window.set_default_size(300, 300);

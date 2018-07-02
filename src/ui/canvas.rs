@@ -30,6 +30,10 @@ impl Canvas {
             .map(move |(i, tile)| (i % width, i / width, tile))
     }
 
+    pub fn get_tile(&self, x: usize, y: usize) -> Tile {
+        self.tiles[x + y * self.width]
+    }
+
     pub fn set_tile(&mut self, x: usize, y: usize, tile: Tile) {
         if x >= self.width || y >= self.height {
             return;

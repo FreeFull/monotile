@@ -3,7 +3,6 @@ use std::rc::Rc;
 use gtk::prelude::*;
 use gtk::{ColorButton, Grid, Label};
 
-use gdk;
 use gdk::prelude::*;
 
 use ui::State;
@@ -18,20 +17,36 @@ pub fn build(state: &Rc<State>) -> Grid {
         let state = state.clone();
         move |button| {
             state.current_tile.borrow_mut().fg = button.get_rgba().into();
-            button
+            state
+                .window
                 .get_window()
                 .map(|window| window.invalidate_rect(None, true));
         }
     });
+    fg_button.connect_draw({
+        let state = state.clone();
+        move |button, _| {
+            button.set_rgba(&state.current_tile.borrow().fg.into());
+            Inhibit(false)
+        }
+    });
     let bg_label = Label::new("bg");
-    let bg_button = ColorButton::new_with_rgba(&gdk::RGBA::from(tile.bg));
+    let bg_button = ColorButton::new_with_rgba(&tile.bg.into());
     bg_button.connect_color_set({
         let state = state.clone();
         move |button| {
             state.current_tile.borrow_mut().bg = button.get_rgba().into();
-            button
+            state
+                .window
                 .get_window()
                 .map(|window| window.invalidate_rect(None, true));
+        }
+    });
+    bg_button.connect_draw({
+        let state = state.clone();
+        move |button, _| {
+            button.set_rgba(&state.current_tile.borrow().bg.into());
+            Inhibit(false)
         }
     });
     grid.attach(&fg_label, 0, 0, 1, 1);

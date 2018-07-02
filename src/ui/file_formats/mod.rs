@@ -36,11 +36,7 @@ impl SaveData {
                 (bg & 0xFF) as f64 / 255.0,
                 (bg >> 24 & 0xFF) as f64 / 255.0,
             );
-            tiles.push(Tile {
-                index,
-                fg,
-                bg,
-            });
+            tiles.push(Tile { index, fg, bg });
         }
         tiles
     }
