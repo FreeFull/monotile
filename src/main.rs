@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 extern crate cairo;
 extern crate gdk;
 extern crate gio;
