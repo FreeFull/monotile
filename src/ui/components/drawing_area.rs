@@ -50,7 +50,7 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
 
     area.connect_leave_notify_event({
         let state = state.clone();
-        move |_, _| left(&state)
+        move |area, _| left(area, &state)
     });
 
     area.show_all();
@@ -113,7 +113,8 @@ fn moved(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventMotion) -> Inh
     Inhibit(true)
 }
 
-fn left(state: &Rc<State>) -> Inhibit {
+fn left(area: &gtk::DrawingArea, state: &Rc<State>) -> Inhibit {
     state.canvas_cursor_position.replace(None);
+    area.queue_draw();
     Inhibit(false)
 }
