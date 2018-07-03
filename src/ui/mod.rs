@@ -70,16 +70,19 @@ fn add_actions(state: &Rc<State>) {
     let save = gio::SimpleAction::new("save", None);
     save.connect_activate({
         let state = state.clone();
-        move |_, _| match *state.open_file.borrow() {
-            Some(ref path) => {
-                let canvas = state.canvas.borrow();
-                match file_formats::save(&path, &canvas) {
-                    Ok(_) => {}
-                    Err(err) => println!("save failed: {}", err),
+        move |_, _| {
+            let open_file = state.open_file.borrow().clone();
+            match open_file {
+                Some(ref path) => {
+                    let canvas = state.canvas.borrow();
+                    match file_formats::save(&path, &canvas) {
+                        Ok(_) => {}
+                        Err(err) => println!("save failed: {}", err),
+                    }
                 }
-            }
-            None => {
-                state.app.activate_action("saveas", None);
+                None => {
+                    state.app.activate_action("saveas", None);
+                }
             }
         }
     });
