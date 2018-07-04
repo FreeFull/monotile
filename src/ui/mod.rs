@@ -19,14 +19,23 @@ pub use self::state::State;
 
 fn build_menu(app: &gtk::Application) {
     let menu = gio::Menu::new();
-    menu.append("New", "app.new");
-    menu.append("Open", "app.open");
-    menu.append("Save", "app.save");
-    menu.append("Save as", "app.saveas");
+    let file = gio::Menu::new();
+    menu.append_submenu("File", &file);
+    file.append("New", "app.new");
+    file.append("Open", "app.open");
+    file.append("Save", "app.save");
+    file.append("Save as", "app.saveas");
 
-    menu.append("Quit", "app.quit");
+    file.append("Quit", "app.quit");
+    let edit = gio::Menu::new();
+    menu.append_submenu("Edit", &edit);
+    edit.append("Undo", "app.undo");
+    edit.append("Redo", "app.redo");
+    edit.append("Cut", "app.cut");
+    edit.append("Copy", "app.copy");
+    edit.append("Paste", "app.paste");
 
-    app.set_app_menu(&menu);
+    app.set_menubar(&menu);
 }
 
 fn add_actions(state: &Rc<State>) {
