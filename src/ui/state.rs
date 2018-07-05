@@ -15,4 +15,11 @@ pub struct State {
     pub canvas_cursor_position: RefCell<Option<(usize, usize)>>,
     pub tileset: tileset::Tileset,
     pub current_tile: RefCell<Tile>,
+    pub current_tool: RefCell<Tool>,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Tool {
+    Draw,
+    FloodFill,
 }

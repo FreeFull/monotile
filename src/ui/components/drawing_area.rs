@@ -6,7 +6,7 @@ use gtk::prelude::*;
 use gdk::prelude::*;
 use gdk::{EventButton, EventMask, EventMotion, ModifierType};
 
-use ui::State;
+use ui::state::{State, Tool};
 
 const SCALE: f64 = 2.0;
 
@@ -67,16 +67,31 @@ fn pressed(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventButton) -> I
         3 => ModifierType::BUTTON3_MASK,
         _ => ModifierType::empty(),
     };
-    mouse_event(area, state, position, modifiers);
+    let tool = state.current_tool.borrow().clone();
+    match tool {
+        Tool::Draw => draw(area, state, position, modifiers),
+        Tool::FloodFill => fill(area, state, position, modifiers),
+    }
     Inhibit(true)
 }
 
-fn mouse_event(
-    area: &gtk::DrawingArea,
-    state: &Rc<State>,
-    position: (f64, f64),
-    modifiers: ModifierType,
-) {
+fn moved(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventMotion) -> Inhibit {
+    event.request_motions();
+    let position = event.get_position();
+    let modifiers = event.get_state();
+    if *state.current_tool.borrow() == Tool::Draw {
+        draw(area, state, position, modifiers);
+    }
+    Inhibit(true)
+}
+
+fn left(area: &gtk::DrawingArea, state: &Rc<State>) -> Inhibit {
+    state.canvas_cursor_position.replace(None);
+    area.queue_draw();
+    Inhibit(false)
+}
+
+fn draw(area: &gtk::DrawingArea, state: &Rc<State>, position: (f64, f64), modifiers: ModifierType) {
     let (x, y) = position;
     let (x, y) = (x / (8.0 * SCALE), y / (8.0 * SCALE));
     let tile = state.current_tile.borrow().clone();
@@ -105,16 +120,18 @@ fn mouse_event(
     area.queue_draw();
 }
 
-fn moved(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventMotion) -> Inhibit {
-    event.request_motions();
-    let position = event.get_position();
-    let modifiers = event.get_state();
-    mouse_event(area, state, position, modifiers);
-    Inhibit(true)
-}
-
-fn left(area: &gtk::DrawingArea, state: &Rc<State>) -> Inhibit {
-    state.canvas_cursor_position.replace(None);
+fn fill(
+    area: &gtk::DrawingArea,
+    state: &Rc<State>,
+    position: (f64, f64),
+    _modifiers: ModifierType,
+) {
+    let (x, y) = position;
+    let (x, y) = (x / (8.0 * SCALE), y / (8.0 * SCALE));
+    let tile = state.current_tile.borrow().clone();
+    state
+        .canvas
+        .borrow_mut()
+        .flood_fill(x as usize, y as usize, tile);
     area.queue_draw();
-    Inhibit(false)
 }

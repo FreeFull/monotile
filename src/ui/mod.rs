@@ -196,6 +196,7 @@ pub fn build(app: &gtk::Application) {
             fg: Color::rgb(1.0, 1.0, 1.0),
             bg: Color::rgb(0.0, 0.0, 0.0),
         }),
+        current_tool: RefCell::new(state::Tool::Draw),
     });
 
     app.connect_open({
@@ -232,8 +233,10 @@ pub fn build(app: &gtk::Application) {
 
     let tile_chooser = tile_chooser::build(&state);
     let color_chooser = color_chooser::build(&state);
+    let tool_chooser = tool_chooser::build(&state);
     side_bar.add(&tile_chooser);
     side_bar.add(&color_chooser);
+    side_bar.add(&tool_chooser);
 
     window.add(&app_box);
 

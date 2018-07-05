@@ -41,6 +41,13 @@ impl Canvas {
         self.tiles[x + y * self.width] = tile;
     }
 
+    // TODO: Implement flood filling algorithm
+    pub fn flood_fill(&mut self, _x: usize, _y: usize, new_tile: Tile) {
+        for tile in &mut self.tiles {
+            *tile = new_tile;
+        }
+    }
+
     pub fn set_all_tiles(&mut self, tiles: Vec<Tile>) {
         assert_eq!(tiles.len(), self.width * self.height);
         self.tiles = tiles;
