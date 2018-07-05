@@ -35,6 +35,11 @@ fn build_menu(app: &gtk::Application) {
     edit.append("Copy", "app.copy");
     edit.append("Paste", "app.paste");
 
+    let help = gio::Menu::new();
+    menu.append_submenu("Help", &help);
+    help.append("Monotile Help", "app.help");
+    help.append("About Monotile", "app.about");
+
     app.set_menubar(&menu);
 }
 
