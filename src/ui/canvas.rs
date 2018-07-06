@@ -41,10 +41,38 @@ impl Canvas {
         self.tiles[x + y * self.width] = tile;
     }
 
-    // TODO: Implement flood filling algorithm
-    pub fn flood_fill(&mut self, _x: usize, _y: usize, new_tile: Tile) {
-        for tile in &mut self.tiles {
-            *tile = new_tile;
+    pub fn flood_fill(&mut self, mut x: usize, mut y: usize, tile: Tile) {
+        use std::collections::VecDeque;
+        if x >= self.width { x = self.width - 1; }
+        if y >= self.height { y = self.height - 1; }
+
+        let mut queue = VecDeque::new();
+        let old_tile = self.get_tile(x, y);
+        if old_tile == tile {
+            return;
+        }
+        queue.push_back((x, y));
+        while let Some((x, y)) = queue.pop_front() {
+            if self.get_tile(x, y) != old_tile {
+                continue;
+            }
+            self.set_tile(x, y, tile);
+            if x == 0 {
+                queue.push_back((1, y));
+            } else if x == self.width - 1 {
+                queue.push_back((x - 1, y));
+            } else {
+                queue.push_back((x - 1, y));
+                queue.push_back((x + 1, y));
+            }
+            if y == 0 {
+                queue.push_back((x, 1));
+            } else if y == self.height - 1 {
+                queue.push_back((x, y - 1));
+            } else {
+                queue.push_back((x, y - 1));
+                queue.push_back((x, y + 1));
+            }
         }
     }
 
