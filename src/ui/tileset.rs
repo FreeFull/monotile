@@ -1,6 +1,7 @@
 use std::fmt;
 
 use cairo::{Context, Filter, Format, ImageSurface, Pattern, PatternTrait, SurfacePattern};
+use gdk::RGBA;
 use image::{self, GenericImage};
 
 use ui::canvas::Tile;
@@ -39,13 +40,13 @@ impl Tileset {
     pub fn draw_tile(&self, cr: &Context, x: usize, y: usize, tile: &Tile) {
         cr.save();
         cr.translate(x as f64 * 8.0, y as f64 * 8.0);
-        let bg = tile.bg;
-        let fg = tile.fg;
+        let bg = RGBA::from(tile.bg);
+        let fg = RGBA::from(tile.fg);
         cr.rectangle(0.0, 0.0, 8.0, 8.0);
         cr.clip();
-        cr.set_source_rgb(bg.r, bg.g, bg.b);
+        cr.set_source_rgb(bg.red, bg.green, bg.blue);
         cr.paint();
-        cr.set_source_rgb(fg.r, fg.g, fg.b);
+        cr.set_source_rgb(fg.red, fg.green, fg.blue);
         cr.translate(
             -((tile.index % WIDTH) as f64) * 8.0,
             -((tile.index / WIDTH) as f64) * 8.0,

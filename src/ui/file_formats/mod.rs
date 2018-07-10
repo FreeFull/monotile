@@ -25,16 +25,16 @@ impl SaveData {
             .zip(self.background.iter())
         {
             let fg = Color::rgba(
-                (fg >> 16 & 0xFF) as f64 / 255.0,
-                (fg >> 8 & 0xFF) as f64 / 255.0,
-                (fg & 0xFF) as f64 / 255.0,
-                (fg >> 24 & 0xFF) as f64 / 255.0,
+                (fg >> 16 & 0xFF) as u8,
+                (fg >> 8 & 0xFF) as u8,
+                (fg & 0xFF) as u8,
+                (fg >> 24 & 0xFF) as u8,
             );
             let bg = Color::rgba(
-                (bg >> 16 & 0xFF) as f64 / 255.0,
-                (bg >> 8 & 0xFF) as f64 / 255.0,
-                (bg & 0xFF) as f64 / 255.0,
-                (bg >> 24 & 0xFF) as f64 / 255.0,
+                (bg >> 16 & 0xFF) as u8,
+                (bg >> 8 & 0xFF) as u8,
+                (bg & 0xFF) as u8,
+                (bg >> 24 & 0xFF) as u8,
             );
             tiles.push(Tile { index, fg, bg });
         }

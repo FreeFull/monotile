@@ -193,8 +193,8 @@ pub fn build(app: &gtk::Application) {
         tileset: tileset::Tileset::new(),
         current_tile: RefCell::new(Tile {
             index: 0,
-            fg: Color::rgb(1.0, 1.0, 1.0),
-            bg: Color::rgb(0.0, 0.0, 0.0),
+            fg: Color::rgb(255, 255, 255),
+            bg: Color::rgb(0, 0, 0),
         }),
         current_tool: RefCell::new(state::Tool::Draw),
     });

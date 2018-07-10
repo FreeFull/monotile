@@ -43,8 +43,12 @@ impl Canvas {
 
     pub fn flood_fill(&mut self, mut x: usize, mut y: usize, tile: Tile) {
         use std::collections::VecDeque;
-        if x >= self.width { x = self.width - 1; }
-        if y >= self.height { y = self.height - 1; }
+        if x >= self.width {
+            x = self.width - 1;
+        }
+        if y >= self.height {
+            y = self.height - 1;
+        }
 
         let mut queue = VecDeque::new();
         let old_tile = self.get_tile(x, y);
@@ -107,37 +111,42 @@ impl Default for Tile {
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
 pub struct Color {
-    pub r: f64,
-    pub g: f64,
-    pub b: f64,
-    pub a: f64,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
 }
 
 impl Color {
-    pub fn rgb(r: f64, g: f64, b: f64) -> Color {
-        Color { r, g, b, a: 1.0 }
+    pub fn rgb(r: u8, g: u8, b: u8) -> Color {
+        Color { r, g, b, a: 255 }
     }
 
-    pub fn rgba(r: f64, g: f64, b: f64, a: f64) -> Color {
+    pub fn rgba(r: u8, g: u8, b: u8, a: u8) -> Color {
         Color { r, g, b, a }
     }
 
     pub fn to_argb(&self) -> u32 {
-        let r = (self.r * 255.0) as u32;
-        let g = (self.g * 255.0) as u32;
-        let b = (self.b * 255.0) as u32;
-        let a = (self.a * 255.0) as u32;
+        let (r, g, b, a) = (self.r as u32, self.g as u32, self.b as u32, self.a as u32);
         (a << 24) | (r << 16) | (g << 8) | b
     }
 }
 
 impl From<gdk::RGBA> for Color {
-    fn from(rgba: gdk::RGBA) -> Color {
+    fn from(mut rgba: gdk::RGBA) -> Color {
+        rgba.red = rgba.red.min(1.0);
+        rgba.red = rgba.red.max(0.0);
+        rgba.green = rgba.green.min(1.0);
+        rgba.green = rgba.green.max(0.0);
+        rgba.blue = rgba.blue.min(1.0);
+        rgba.blue = rgba.blue.max(0.0);
+        rgba.alpha = rgba.alpha.min(1.0);
+        rgba.alpha = rgba.alpha.max(0.0);
         Color {
-            r: rgba.red,
-            g: rgba.green,
-            b: rgba.blue,
-            a: rgba.alpha,
+            r: (rgba.red * 255.0) as u8,
+            g: (rgba.green * 255.0) as u8,
+            b: (rgba.blue * 255.0) as u8,
+            a: (rgba.alpha * 255.0) as u8,
         }
     }
 }
@@ -145,10 +154,10 @@ impl From<gdk::RGBA> for Color {
 impl From<Color> for gdk::RGBA {
     fn from(color: Color) -> gdk::RGBA {
         gdk::RGBA {
-            red: color.r,
-            green: color.g,
-            blue: color.b,
-            alpha: color.a,
+            red: color.r as f64 / 255.0,
+            green: color.g as f64 / 255.0,
+            blue: color.b as f64 / 255.0,
+            alpha: color.a as f64 / 255.0,
         }
     }
 }
