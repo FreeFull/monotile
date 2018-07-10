@@ -13,6 +13,7 @@ pub fn build(state: &Rc<State>) -> Grid {
     grid.set_column_homogeneous(true);
     let fg_label = Label::new("fg");
     let fg_button = ColorButton::new_with_rgba(&tile.fg.into());
+    fg_button.set_tooltip_text("Set foreground colour.");
     fg_button.connect_color_set({
         let state = state.clone();
         move |button| {
@@ -32,6 +33,7 @@ pub fn build(state: &Rc<State>) -> Grid {
     });
     let bg_label = Label::new("bg");
     let bg_button = ColorButton::new_with_rgba(&tile.bg.into());
+    bg_button.set_tooltip_text("Set background colour.");
     bg_button.connect_color_set({
         let state = state.clone();
         move |button| {
@@ -52,8 +54,11 @@ pub fn build(state: &Rc<State>) -> Grid {
     let icon_size = gtk::IconSize::LargeToolbar.into();
     // TODO Implement colour picking
     let pick_fg = Button::new_from_icon_name("color-select-symbolic", icon_size);
+    pick_fg.set_tooltip_text("Pick foreground colour. (Unimplemented)");
     let pick_bg = Button::new_from_icon_name("color-select-symbolic", icon_size);
+    pick_bg.set_tooltip_text("Pick background colour. (Unimplemented)");
     let swap = Button::new_from_icon_name("media-playlist-shuffle-symbolic", icon_size);
+    swap.set_tooltip_text("Swap foreground and background colours.");
     swap.connect_clicked({
         let state = state.clone();
         move |_| {

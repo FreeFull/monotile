@@ -10,6 +10,7 @@ pub fn build(state: &Rc<State>) -> Toolbar {
     let draw = RadioToolButton::new();
     draw.set_icon_name("document-edit-symbolic");
     draw.set_label("Draw");
+    draw.set_tooltip_text("Draw");
     draw.connect_clicked({
         let state = state.clone();
         move |_| {
@@ -19,6 +20,7 @@ pub fn build(state: &Rc<State>) -> Toolbar {
     let flood = RadioToolButton::new_from_widget(&draw);
     flood.set_icon_name("edit-clear-all-symbolic");
     flood.set_label("Flood fill");
+    flood.set_tooltip_text("Flood fill");
     flood.connect_clicked({
         let state = state.clone();
         move |_| {
