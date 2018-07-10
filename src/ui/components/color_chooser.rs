@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use gtk::prelude::*;
-use gtk::{ColorButton, Grid, Label};
+use gtk::{self, Button, ColorButton, Grid, Label};
 
 use gdk::prelude::*;
 
@@ -49,9 +49,31 @@ pub fn build(state: &Rc<State>) -> Grid {
             Inhibit(false)
         }
     });
+    let icon_size = gtk::IconSize::LargeToolbar.into();
+    // TODO Implement colour picking
+    let pick_fg = Button::new_from_icon_name("color-select-symbolic", icon_size);
+    let pick_bg = Button::new_from_icon_name("color-select-symbolic", icon_size);
+    let swap = Button::new_from_icon_name("media-playlist-shuffle-symbolic", icon_size);
+    swap.connect_clicked({
+        let state = state.clone();
+        move |_| {
+            let mut tile = state.current_tile.borrow().clone();
+            ::std::mem::swap(&mut tile.fg, &mut tile.bg);
+            state.current_tile.replace(tile);
+            state
+                .window
+                .get_window()
+                .map(|window| window.invalidate_rect(None, true));
+        }
+    });
     grid.attach(&fg_label, 0, 0, 1, 1);
     grid.attach(&fg_button, 1, 0, 1, 1);
+    grid.attach(&pick_fg, 2, 0, 1, 1);
+
     grid.attach(&bg_label, 0, 1, 1, 1);
     grid.attach(&bg_button, 1, 1, 1, 1);
+    grid.attach(&pick_bg, 2, 1, 1, 1);
+
+    grid.attach(&swap, 3, 0, 1, 2);
     grid
 }
