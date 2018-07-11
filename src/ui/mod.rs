@@ -50,6 +50,11 @@ fn add_actions(state: &Rc<State>) {
         move |_, _| {
             state.open_file.replace(None);
             state.canvas.replace(Canvas::default());
+            state.current_tile.replace(Tile {
+                index: 0,
+                fg: Color::rgb(255, 255, 255),
+                bg: Color::rgb(0, 0, 0),
+            });
             state.app.activate_action("file_changed", None);
         }
     });
