@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
 use gtk::prelude::*;
-use gtk::{self, Button, ColorButton, Grid, Label};
+use gtk::{self, AccelFlags, AccelGroup, Button, ColorButton, Grid, Label};
 
+use gdk::enums::key;
 use gdk::prelude::*;
+use gdk::ModifierType;
 
 use ui::State;
 
@@ -13,7 +15,7 @@ pub fn build(state: &Rc<State>) -> Grid {
     grid.set_column_homogeneous(true);
     let fg_label = Label::new("fg");
     let fg_button = ColorButton::new_with_rgba(&tile.fg.into());
-    fg_button.set_tooltip_text("Set foreground colour.");
+    fg_button.set_tooltip_markup("Set foreground colour. <b>Q</b>");
     fg_button.connect_color_set({
         let state = state.clone();
         move |button| {
@@ -33,7 +35,7 @@ pub fn build(state: &Rc<State>) -> Grid {
     });
     let bg_label = Label::new("bg");
     let bg_button = ColorButton::new_with_rgba(&tile.bg.into());
-    bg_button.set_tooltip_text("Set background colour.");
+    bg_button.set_tooltip_markup("Set background colour. <b>E</b>");
     bg_button.connect_color_set({
         let state = state.clone();
         move |button| {
@@ -54,11 +56,11 @@ pub fn build(state: &Rc<State>) -> Grid {
     let icon_size = gtk::IconSize::LargeToolbar.into();
     // TODO Implement colour picking
     let pick_fg = Button::new_from_icon_name("color-select-symbolic", icon_size);
-    pick_fg.set_tooltip_text("Pick foreground colour. (Unimplemented)");
+    pick_fg.set_tooltip_markup("Pick foreground colour. (Unimplemented) <b>Z</b>");
     let pick_bg = Button::new_from_icon_name("color-select-symbolic", icon_size);
-    pick_bg.set_tooltip_text("Pick background colour. (Unimplemented)");
+    pick_bg.set_tooltip_markup("Pick background colour. (Unimplemented) <b>C</b>");
     let swap = Button::new_from_icon_name("media-playlist-shuffle-symbolic", icon_size);
-    swap.set_tooltip_text("Swap foreground and background colours.");
+    swap.set_tooltip_markup("Swap foreground and background colours. <b>X</b>");
     swap.connect_clicked({
         let state = state.clone();
         move |_| {
@@ -71,6 +73,46 @@ pub fn build(state: &Rc<State>) -> Grid {
                 .map(|window| window.invalidate_rect(None, true));
         }
     });
+
+    let group = AccelGroup::new();
+    state.window.add_accel_group(&group);
+
+    fg_button.add_accelerator(
+        "activate",
+        &group,
+        key::Q,
+        ModifierType::empty(),
+        AccelFlags::VISIBLE,
+    );
+    bg_button.add_accelerator(
+        "activate",
+        &group,
+        key::E,
+        ModifierType::empty(),
+        AccelFlags::VISIBLE,
+    );
+    pick_fg.add_accelerator(
+        "activate",
+        &group,
+        key::Z,
+        ModifierType::empty(),
+        AccelFlags::VISIBLE,
+    );
+    pick_bg.add_accelerator(
+        "activate",
+        &group,
+        key::C,
+        ModifierType::empty(),
+        AccelFlags::VISIBLE,
+    );
+    swap.add_accelerator(
+        "activate",
+        &group,
+        key::X,
+        ModifierType::empty(),
+        AccelFlags::VISIBLE,
+    );
+
     grid.attach(&fg_label, 0, 0, 1, 1);
     grid.attach(&fg_button, 1, 0, 1, 1);
     grid.attach(&pick_fg, 2, 0, 1, 1);

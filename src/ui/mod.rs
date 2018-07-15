@@ -184,6 +184,23 @@ fn add_actions(state: &Rc<State>) {
     state.app.add_action(&file_changed);
 }
 
+fn add_accelerators(state: &Rc<State>) {
+    let app = &state.app;
+    app.set_accels_for_action("app.new", &["<Primary>n"]);
+    app.set_accels_for_action("app.open", &["<Primary>o"]);
+    app.set_accels_for_action("app.save", &["<Primary>s"]);
+    app.set_accels_for_action("app.saveas", &["<Primary><Shift>s"]);
+    app.set_accels_for_action("app.quit", &["<Primary>q"]);
+
+    app.set_accels_for_action("app.undo", &["<Primary>z"]);
+    app.set_accels_for_action("app.redo", &["<Primary><Shift>z", "<Primary>r"]);
+    app.set_accels_for_action("app.cut", &["<Primary>x"]);
+    app.set_accels_for_action("app.copy", &["<Primary>c"]);
+    app.set_accels_for_action("app.paste", &["<Primary>v"]);
+
+    app.set_accels_for_action("app.help", &["F1"]);
+}
+
 pub fn build(app: &gtk::Application) {
     build_menu(app);
 
@@ -222,6 +239,7 @@ pub fn build(app: &gtk::Application) {
     });
 
     add_actions(&state);
+    add_accelerators(&state);
 
     window.set_title("Monotile");
     window.set_default_size(300, 300);
