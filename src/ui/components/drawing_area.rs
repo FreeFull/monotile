@@ -12,7 +12,7 @@ const SCALE: f64 = 2.0;
 
 pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
     let area = gtk::DrawingArea::new();
-    let (width, height) = state.canvas.borrow().size();
+    let (width, height) = state.canvas_surface.borrow().canvas.size();
     let (width, height) = (width * 8, height * 8);
     area.set_size_request(width as i32 * 2, height as i32 * 2);
     let mask = EventMask::POINTER_MOTION_MASK
@@ -23,16 +23,14 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
         let state = state.clone();
         move |_, cr| {
             cr.scale(SCALE, SCALE);
-            cr.set_source_rgb(0.0, 0.0, 0.0);
-            cr.rectangle(0.0, 0.0, width as f64, height as f64);
-            cr.fill();
-            let canvas = state.canvas.borrow();
-            for (x, y, tile) in canvas.tiles() {
-                state.tileset.draw_tile(&cr, x, y, tile);
-            }
+            state.canvas_surface.borrow().draw(&cr);
             if let Some((x, y)) = state.canvas_cursor_position.borrow().clone() {
                 let tile = state.current_tile.borrow().clone();
-                state.tileset.draw_tile_alpha(&cr, x, y, &tile, 0.5);
+                state
+                    .canvas_surface
+                    .borrow()
+                    .tileset
+                    .draw_tile_alpha(&cr, x, y, &tile, 0.5);
             }
             Inhibit(false)
         }
@@ -97,18 +95,22 @@ fn draw(area: &gtk::DrawingArea, state: &Rc<State>, position: (f64, f64), modifi
     let tile = state.current_tile.borrow().clone();
     if modifiers.contains(ModifierType::BUTTON1_MASK) {
         state
-            .canvas
+            .canvas_surface
             .borrow_mut()
             .set_tile(x as usize, y as usize, tile);
     } else if modifiers.contains(ModifierType::BUTTON3_MASK) {
-        let tile = state.canvas.borrow().get_tile(x as usize, y as usize);
+        let tile = state
+            .canvas_surface
+            .borrow()
+            .canvas
+            .get_tile(x as usize, y as usize);
         state.current_tile.replace(tile);
         state
             .window
             .get_window()
             .map(|window| window.invalidate_rect(None, true));
     }
-    let (max_x, max_y) = state.canvas.borrow().size();
+    let (max_x, max_y) = state.canvas_surface.borrow().canvas.size();
     let (mut x, mut y) = (x, y);
     x = x.max(0.0);
     x = x.min(max_x as f64);
@@ -130,7 +132,7 @@ fn fill(
     let (x, y) = (x / (8.0 * SCALE), y / (8.0 * SCALE));
     let tile = state.current_tile.borrow().clone();
     state
-        .canvas
+        .canvas_surface
         .borrow_mut()
         .flood_fill(x as usize, y as usize, tile);
     area.queue_draw();

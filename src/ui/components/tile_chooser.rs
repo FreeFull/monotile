@@ -36,7 +36,11 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
                 };
                 let x = i % (tileset::WIDTH as usize);
                 let y = i / (tileset::WIDTH as usize);
-                state.tileset.draw_tile(&cr, x, y, &tile);
+                state
+                    .canvas_surface
+                    .borrow()
+                    .tileset
+                    .draw_tile(&cr, x, y, &tile);
             }
             let i = current_tile.index;
             let x = i % tileset::WIDTH;

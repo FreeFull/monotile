@@ -15,6 +15,7 @@ use self::components::*;
 mod file_formats;
 mod state;
 mod tileset;
+use self::state::CanvasSurface;
 pub use self::state::State;
 
 fn build_menu(app: &gtk::Application) {
@@ -49,7 +50,10 @@ fn add_actions(state: &Rc<State>) {
         let state = state.clone();
         move |_, _| {
             state.open_file.replace(None);
-            state.canvas.replace(Canvas::default());
+            state
+                .canvas_surface
+                .borrow_mut()
+                .set_canvas(Canvas::default());
             state.current_tile.replace(Tile {
                 index: 0,
                 fg: Color::rgb(255, 255, 255),
@@ -93,7 +97,7 @@ fn add_actions(state: &Rc<State>) {
             let open_file = state.open_file.borrow().clone();
             match open_file {
                 Some(ref path) => {
-                    let canvas = state.canvas.borrow();
+                    let canvas = &state.canvas_surface.borrow().canvas;
                     match file_formats::save(&path, &canvas) {
                         Ok(_) => {}
                         Err(err) => println!("save failed: {}", err),
@@ -139,7 +143,7 @@ fn add_actions(state: &Rc<State>) {
                             return;
                         }
                         if let Some(path) = files[0].get_path() {
-                            let canvas = state.canvas.borrow();
+                            let canvas = &state.canvas_surface.borrow().canvas;
                             match file_formats::save(&path, &canvas) {
                                 Ok(_) => {
                                     state.open_file.replace(Some(path.clone()));
@@ -210,9 +214,11 @@ pub fn build(app: &gtk::Application) {
         app: app.clone(),
         window: window.clone(),
         open_file: RefCell::new(None),
-        canvas: RefCell::new(Canvas::new(32, 32)),
+        canvas_surface: RefCell::new(CanvasSurface::new(
+            Canvas::new(32, 32),
+            tileset::Tileset::new(),
+        )),
         canvas_cursor_position: RefCell::new(None),
-        tileset: tileset::Tileset::new(),
         current_tile: RefCell::new(Tile {
             index: 0,
             fg: Color::rgb(255, 255, 255),
@@ -227,7 +233,7 @@ pub fn build(app: &gtk::Application) {
             let path = files[0].get_path().expect("get_path failed");
             match file_formats::load(&path) {
                 Ok(canvas) => {
-                    state.canvas.replace(canvas);
+                    state.canvas_surface.borrow_mut().set_canvas(canvas);
                     state.open_file.replace(Some(path));
                     app.activate_action("file_changed", None);
                 }
