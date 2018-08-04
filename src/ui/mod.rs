@@ -1,4 +1,4 @@
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 use gdk::WindowExt;
@@ -99,7 +99,10 @@ fn add_actions(state: &Rc<State>) {
                 Some(ref path) => {
                     let canvas = &state.canvas_surface.borrow().canvas;
                     match file_formats::save(&path, &canvas) {
-                        Ok(_) => {}
+                        Ok(_) => {
+                            state.modified.set(false);
+                            set_title(&state);
+                        }
                         Err(err) => println!("save failed: {}", err),
                     }
                 }
@@ -177,6 +180,17 @@ fn add_actions(state: &Rc<State>) {
                 .window
                 .get_window()
                 .map(|window| window.invalidate_rect(None, true));
+            state.modified.set(false);
+            set_title(&state);
+        }
+    });
+
+    let modified = gio::SimpleAction::new("modified", None);
+    modified.connect_activate({
+        let state = state.clone();
+        move |_, _| {
+            state.modified.set(true);
+            set_title(&state);
         }
     });
 
@@ -186,6 +200,7 @@ fn add_actions(state: &Rc<State>) {
     state.app.add_action(&saveas);
     state.app.add_action(&quit);
     state.app.add_action(&file_changed);
+    state.app.add_action(&modified);
 }
 
 fn add_accelerators(state: &Rc<State>) {
@@ -205,6 +220,31 @@ fn add_accelerators(state: &Rc<State>) {
     app.set_accels_for_action("app.help", &["F1"]);
 }
 
+fn set_title(state: &Rc<State>) {
+    let mut title = String::from("Monotile - ");
+    if state.modified.get() {
+        title.push('*');
+    }
+    title.push('[');
+    match *state.open_file.borrow() {
+        Some(ref file) => {
+            match file.file_name() {
+                Some(name) => {
+                    title.push_str(&name.to_string_lossy());
+                }
+                None => {
+                    eprintln!("Warning: file path ends in ..");
+                }
+            }
+        }
+        None => {
+            title.push_str("Untitled");
+        }
+    }
+    title.push(']');
+    state.window.set_title(&title);
+}
+
 pub fn build(app: &gtk::Application) {
     build_menu(app);
 
@@ -214,6 +254,7 @@ pub fn build(app: &gtk::Application) {
         app: app.clone(),
         window: window.clone(),
         open_file: RefCell::new(None),
+        modified: Cell::new(false),
         canvas_surface: RefCell::new(CanvasSurface::new(
             Canvas::new(32, 32),
             tileset::Tileset::new(),
@@ -268,6 +309,8 @@ pub fn build(app: &gtk::Application) {
     side_bar.add(&tool_chooser);
 
     window.add(&app_box);
+
+    set_title(&state);
 
     window.show_all();
 }

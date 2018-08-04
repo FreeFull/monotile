@@ -6,6 +6,8 @@ use gtk::prelude::*;
 use gdk::prelude::*;
 use gdk::{EventButton, EventMask, EventMotion, ModifierType};
 
+use gio::prelude::*;
+
 use ui::state::{State, Tool};
 
 const SCALE: f64 = 2.0;
@@ -98,6 +100,7 @@ fn draw(area: &gtk::DrawingArea, state: &Rc<State>, position: (f64, f64), modifi
             .canvas_surface
             .borrow_mut()
             .set_tile(x as usize, y as usize, tile);
+        state.app.activate_action("modified", None);
     } else if modifiers.contains(ModifierType::BUTTON3_MASK) {
         let tile = state
             .canvas_surface
@@ -135,5 +138,6 @@ fn fill(
         .canvas_surface
         .borrow_mut()
         .flood_fill(x as usize, y as usize, tile);
+    state.app.activate_action("modified", None);
     area.queue_draw();
 }

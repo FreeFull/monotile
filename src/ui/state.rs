@@ -1,4 +1,4 @@
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::path::PathBuf;
 
 use cairo::{self, PatternTrait};
@@ -12,6 +12,7 @@ pub struct State {
     pub app: gtk::Application,
     pub window: gtk::ApplicationWindow,
     pub open_file: RefCell<Option<PathBuf>>,
+    pub modified: Cell<bool>,
     pub canvas_surface: RefCell<CanvasSurface>,
     pub canvas_cursor_position: RefCell<Option<(usize, usize)>>,
     pub current_tile: RefCell<Tile>,
@@ -36,9 +37,7 @@ impl CanvasSurface {
     pub fn new(canvas: Canvas, tileset: tileset::Tileset) -> CanvasSurface {
         let (width, height) = canvas.size();
         let (width, height) = (width as i32 * 8, height as i32 * 8);
-        let surface =
-            cairo::ImageSurface::create(cairo::Format::ARgb32, width, height)
-                .unwrap();
+        let surface = cairo::ImageSurface::create(cairo::Format::ARgb32, width, height).unwrap();
         let canvas_surface = CanvasSurface {
             canvas,
             surface,
