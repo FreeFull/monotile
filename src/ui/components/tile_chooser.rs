@@ -9,9 +9,7 @@ use gdk::{EventButton, EventMask};
 use gio::prelude::*;
 use gio::SimpleAction;
 
-use ui::canvas::Tile;
-use ui::tileset;
-use ui::State;
+use crate::ui::{canvas::Tile, tileset, State};
 
 const SCALE: f64 = 2.0;
 
@@ -21,7 +19,7 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
     let (width, height) = (width * 8, height * 8);
     area.set_size_request(width as i32 * 2 + 4, height as i32 * 2 + 4);
     let mask = EventMask::POINTER_MOTION_MASK | EventMask::BUTTON_PRESS_MASK;
-    area.add_events(mask.bits() as i32);
+    area.add_events(mask);
     area.connect_draw({
         let state = state.clone();
         move |_, cr| {

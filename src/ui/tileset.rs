@@ -1,17 +1,17 @@
 use std::fmt;
 
-use cairo::{Context, Filter, Format, ImageSurface, Pattern, PatternTrait, SurfacePattern};
+use cairo::{Context, Filter, Format, ImageSurface, SurfacePattern};
 use gdk::RGBA;
-use image::{self, GenericImage};
+use image::GenericImageView;
 
-use ui::canvas::Tile;
+use crate::ui::canvas::Tile;
 
 const TILESET_IMAGE: &'static [u8] = include_bytes!("../../data/tiles.gif");
 pub const WIDTH: u8 = 16;
 pub const HEIGHT: u8 = 16;
 
 pub struct Tileset {
-    pattern: Pattern,
+    pattern: SurfacePattern,
 }
 
 impl fmt::Debug for Tileset {
@@ -32,7 +32,7 @@ impl Tileset {
         let pattern = SurfacePattern::create(&surface);
         pattern.set_filter(Filter::Nearest);
         Tileset {
-            pattern: Pattern::SurfacePattern(pattern),
+            pattern,
         }
     }
 

@@ -3,19 +3,19 @@ use std::rc::Rc;
 use gtk::prelude::*;
 use gtk::{self, AccelFlags, AccelGroup, Button, ColorButton, Grid, Label};
 
-use gdk::enums::key;
+use gdk::keys::constants as key;
 use gdk::prelude::*;
 use gdk::ModifierType;
 
-use ui::State;
+use crate::ui::State;
 
 pub fn build(state: &Rc<State>) -> Grid {
     let tile = *state.current_tile.borrow();
     let grid = Grid::new();
     grid.set_column_homogeneous(true);
-    let fg_label = Label::new("fg");
-    let fg_button = ColorButton::new_with_rgba(&tile.fg.into());
-    fg_button.set_tooltip_markup("Set foreground colour. <b>Q</b>");
+    let fg_label = Label::new(Some("fg"));
+    let fg_button = ColorButton::with_rgba(&tile.fg.into());
+    fg_button.set_tooltip_markup(Some("Set foreground colour. <b>Q</b>"));
     fg_button.connect_color_set({
         let state = state.clone();
         move |button| {
@@ -33,9 +33,9 @@ pub fn build(state: &Rc<State>) -> Grid {
             Inhibit(false)
         }
     });
-    let bg_label = Label::new("bg");
-    let bg_button = ColorButton::new_with_rgba(&tile.bg.into());
-    bg_button.set_tooltip_markup("Set background colour. <b>E</b>");
+    let bg_label = Label::new(Some("bg"));
+    let bg_button = ColorButton::with_rgba(&tile.bg.into());
+    bg_button.set_tooltip_markup(Some("Set background colour. <b>E</b>"));
     bg_button.connect_color_set({
         let state = state.clone();
         move |button| {
@@ -55,12 +55,12 @@ pub fn build(state: &Rc<State>) -> Grid {
     });
     let icon_size = gtk::IconSize::LargeToolbar.into();
     // TODO Implement colour picking
-    let pick_fg = Button::new_from_icon_name("color-select-symbolic", icon_size);
-    pick_fg.set_tooltip_markup("Pick foreground colour. (Unimplemented) <b>Z</b>");
-    let pick_bg = Button::new_from_icon_name("color-select-symbolic", icon_size);
-    pick_bg.set_tooltip_markup("Pick background colour. (Unimplemented) <b>C</b>");
-    let swap = Button::new_from_icon_name("media-playlist-shuffle-symbolic", icon_size);
-    swap.set_tooltip_markup("Swap foreground and background colours. <b>X</b>");
+    let pick_fg = Button::from_icon_name(Some("color-select-symbolic"), icon_size);
+    pick_fg.set_tooltip_markup(Some("Pick foreground colour. (Unimplemented) <b>Z</b>"));
+    let pick_bg = Button::from_icon_name(Some("color-select-symbolic"), icon_size);
+    pick_bg.set_tooltip_markup(Some("Pick background colour. (Unimplemented) <b>C</b>"));
+    let swap = Button::from_icon_name(Some("media-playlist-shuffle-symbolic"), icon_size);
+    swap.set_tooltip_markup(Some("Swap foreground and background colours. <b>X</b>"));
     swap.connect_clicked({
         let state = state.clone();
         move |_| {
@@ -80,35 +80,35 @@ pub fn build(state: &Rc<State>) -> Grid {
     fg_button.add_accelerator(
         "activate",
         &group,
-        key::Q,
+        *key::Q,
         ModifierType::empty(),
         AccelFlags::VISIBLE,
     );
     bg_button.add_accelerator(
         "activate",
         &group,
-        key::E,
+        *key::E,
         ModifierType::empty(),
         AccelFlags::VISIBLE,
     );
     pick_fg.add_accelerator(
         "activate",
         &group,
-        key::Z,
+        *key::Z,
         ModifierType::empty(),
         AccelFlags::VISIBLE,
     );
     pick_bg.add_accelerator(
         "activate",
         &group,
-        key::C,
+        *key::C,
         ModifierType::empty(),
         AccelFlags::VISIBLE,
     );
     swap.add_accelerator(
         "activate",
         &group,
-        key::X,
+        *key::X,
         ModifierType::empty(),
         AccelFlags::VISIBLE,
     );

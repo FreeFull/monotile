@@ -8,7 +8,7 @@ use gdk::{EventButton, EventMask, EventMotion, ModifierType};
 
 use gio::prelude::*;
 
-use ui::state::{State, Tool};
+use crate::ui::state::{State, Tool};
 
 const SCALE: f64 = 2.0;
 
@@ -20,7 +20,7 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
     let mask = EventMask::POINTER_MOTION_MASK
         | EventMask::BUTTON_PRESS_MASK
         | EventMask::LEAVE_NOTIFY_MASK;
-    area.add_events(mask.bits() as i32);
+    area.add_events(mask);
     area.connect_draw({
         let state = state.clone();
         move |_, cr| {

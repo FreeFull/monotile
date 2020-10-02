@@ -1,9 +1,6 @@
 use std::cell::{Cell, RefCell};
 use std::path::PathBuf;
 
-use cairo::{self, PatternTrait};
-use gtk;
-
 use super::canvas::{Canvas, Tile};
 use super::tileset;
 
@@ -68,8 +65,7 @@ impl CanvasSurface {
         cr.save();
         let pattern = cairo::SurfacePattern::create(&self.surface);
         pattern.set_filter(cairo::Filter::Nearest);
-        let mut pattern = cairo::Pattern::SurfacePattern(pattern);
-        cr.set_source(&mut pattern);
+        cr.set_source(&pattern);
         cr.paint();
         cr.restore();
     }

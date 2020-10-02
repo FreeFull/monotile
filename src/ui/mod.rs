@@ -3,10 +3,8 @@ use std::rc::Rc;
 
 use gdk::WindowExt;
 use gio::prelude::*;
-use gio::{self, MenuExt};
-use glib::translate::ToGlib;
 use gtk::prelude::*;
-use gtk::{self, FileChooserAction, FileChooserNative, FileFilter, Orientation};
+use gtk::{FileChooserAction, FileChooserNative, FileFilter, Orientation};
 
 mod canvas;
 use self::canvas::{Canvas, Color, Tile};
@@ -21,27 +19,26 @@ pub use self::state::State;
 fn build_menu(app: &gtk::Application) {
     let menu = gio::Menu::new();
     let file = gio::Menu::new();
-    menu.append_submenu("File", &file);
-    file.append("New", "app.new");
-    file.append("Open", "app.open");
-    file.append("Save", "app.save");
-    file.append("Save as", "app.saveas");
-
-    file.append("Quit", "app.quit");
+    menu.append_submenu(Some("File"), &file);
+    file.append(Some("New"), Some("app.new"));
+    file.append(Some("Open"), Some("app.open"));
+    file.append(Some("Save"), Some("app.save"));
+    file.append(Some("Save as"), Some("app.saveas"));
+    file.append(Some("Quit"), Some("app.quit"));
     let edit = gio::Menu::new();
-    menu.append_submenu("Edit", &edit);
-    edit.append("Undo", "app.undo");
-    edit.append("Redo", "app.redo");
-    edit.append("Cut", "app.cut");
-    edit.append("Copy", "app.copy");
-    edit.append("Paste", "app.paste");
+    menu.append_submenu(Some("Edit"), &edit);
+    edit.append(Some("Undo"), Some("app.undo"));
+    edit.append(Some("Redo"), Some("app.redo"));
+    edit.append(Some("Cut"), Some("app.cut"));
+    edit.append(Some("Copy"), Some("app.copy"));
+    edit.append(Some("Paste"), Some("app.paste"));
 
     let help = gio::Menu::new();
-    menu.append_submenu("Help", &help);
-    help.append("Monotile Help", "app.help");
-    help.append("About Monotile", "app.about");
+    menu.append_submenu(Some("Help"), &help);
+    help.append(Some("Monotile Help"), Some("app.help"));
+    help.append(Some("About Monotile"), Some("app.about"));
 
-    app.set_menubar(&menu);
+    app.set_menubar(Some(&menu));
 }
 
 fn add_actions(state: &Rc<State>) {
@@ -73,13 +70,13 @@ fn add_actions(state: &Rc<State>) {
             dialog.set_show_hidden(false);
 
             let filter = FileFilter::new();
-            FileFilterExt::set_name(&filter, "Monotile file");
+            filter.set_name(Some("Monotile file"));
             filter.add_pattern("*.monti");
             dialog.add_filter(&filter);
 
             let app = app.clone();
             dialog.connect_response(move |dialog, resp| {
-                if resp == gtk::ResponseType::Accept.to_glib() {
+                if resp == gtk::ResponseType::Accept {
                     let files = dialog.get_files();
                     if files.len() > 0 {
                         app.open(&files, "");
@@ -133,14 +130,14 @@ fn add_actions(state: &Rc<State>) {
             dialog.set_do_overwrite_confirmation(true);
 
             let filter = FileFilter::new();
-            FileFilterExt::set_name(&filter, "Monotile file");
+            filter.set_name(Some("Monotile file"));
             filter.add_pattern("*.monti");
             dialog.add_filter(&filter);
 
             dialog.connect_response({
                 let state = state.clone();
                 move |dialog, resp| {
-                    if resp == gtk::ResponseType::Accept.to_glib() {
+                    if resp == gtk::ResponseType::Accept {
                         let files = dialog.get_files();
                         if files.len() < 1 {
                             return;
