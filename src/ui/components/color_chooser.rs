@@ -4,7 +4,6 @@ use gtk::prelude::*;
 use gtk::{self, AccelFlags, AccelGroup, Button, ColorButton, Grid, Label};
 
 use gdk::keys::constants as key;
-use gdk::prelude::*;
 use gdk::ModifierType;
 
 use crate::ui::State;
@@ -19,10 +18,10 @@ pub fn build(state: &Rc<State>) -> Grid {
     fg_button.connect_color_set({
         let state = state.clone();
         move |button| {
-            state.current_tile.borrow_mut().fg = button.get_rgba().into();
+            state.current_tile.borrow_mut().fg = button.rgba().into();
             state
                 .window
-                .get_window()
+                .window()
                 .map(|window| window.invalidate_rect(None, true));
         }
     });
@@ -39,10 +38,10 @@ pub fn build(state: &Rc<State>) -> Grid {
     bg_button.connect_color_set({
         let state = state.clone();
         move |button| {
-            state.current_tile.borrow_mut().bg = button.get_rgba().into();
+            state.current_tile.borrow_mut().bg = button.rgba().into();
             state
                 .window
-                .get_window()
+                .window()
                 .map(|window| window.invalidate_rect(None, true));
         }
     });
@@ -69,7 +68,7 @@ pub fn build(state: &Rc<State>) -> Grid {
             state.current_tile.replace(tile);
             state
                 .window
-                .get_window()
+                .window()
                 .map(|window| window.invalidate_rect(None, true));
         }
     });

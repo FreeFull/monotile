@@ -6,7 +6,6 @@ use gtk::prelude::*;
 
 use gdk::{EventButton, EventMask};
 
-use gio::prelude::*;
 use gio::SimpleAction;
 
 use crate::ui::{canvas::Tile, tileset, State};
@@ -29,7 +28,7 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
             cr.scale(SCALE, SCALE);
             cr.translate(1.0, 1.0);
             cr.set_source_rgb(0.0, 0.0, 0.0);
-            cr.paint();
+            cr.paint().unwrap();
             for i in 0..256 {
                 let tile = Tile {
                     index: i as u8,
@@ -50,7 +49,7 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
             cr.rectangle(x as f64 * 8.0 - 0.5, y as f64 * 8.0 - 0.5, 9.0, 9.0);
             cr.set_source_rgb(1.0, 0.0, 0.0);
             cr.set_line_width(1.0);
-            cr.stroke();
+            cr.stroke().unwrap();
             Inhibit(false)
         }
     });
@@ -163,7 +162,7 @@ fn add_accelerators(state: &Rc<State>) {
 
 fn pressed(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventButton) -> Inhibit {
     let mut tile = state.current_tile.borrow_mut();
-    let (x, y) = event.get_position();
+    let (x, y) = event.position();
     let (mut x, mut y) = ((x - 1.0) / (8.0 * SCALE), (y - 1.0) / (8.0 * SCALE));
     x = x.max(0.0);
     x = x.min(15.0);

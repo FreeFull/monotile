@@ -134,30 +134,26 @@ impl Color {
 
 impl From<gdk::RGBA> for Color {
     fn from(mut rgba: gdk::RGBA) -> Color {
-        rgba.red = rgba.red.min(1.0);
-        rgba.red = rgba.red.max(0.0);
-        rgba.green = rgba.green.min(1.0);
-        rgba.green = rgba.green.max(0.0);
-        rgba.blue = rgba.blue.min(1.0);
-        rgba.blue = rgba.blue.max(0.0);
-        rgba.alpha = rgba.alpha.min(1.0);
-        rgba.alpha = rgba.alpha.max(0.0);
+        rgba.set_red(rgba.red().clamp(0.0, 1.0));
+        rgba.set_green(rgba.green().clamp(0.0, 1.0));
+        rgba.set_blue(rgba.blue().clamp(0.0, 1.0));
+        rgba.set_alpha(rgba.alpha().clamp(0.0, 1.0));
         Color {
-            r: (rgba.red * 255.0) as u8,
-            g: (rgba.green * 255.0) as u8,
-            b: (rgba.blue * 255.0) as u8,
-            a: (rgba.alpha * 255.0) as u8,
+            r: (rgba.red() * 255.0) as u8,
+            g: (rgba.green() * 255.0) as u8,
+            b: (rgba.blue() * 255.0) as u8,
+            a: (rgba.alpha() * 255.0) as u8,
         }
     }
 }
 
 impl From<Color> for gdk::RGBA {
     fn from(color: Color) -> gdk::RGBA {
-        gdk::RGBA {
-            red: color.r as f64 / 255.0,
-            green: color.g as f64 / 255.0,
-            blue: color.b as f64 / 255.0,
-            alpha: color.a as f64 / 255.0,
-        }
+        gdk::RGBA::new(
+            color.r as f64 / 255.0,
+            color.g as f64 / 255.0,
+            color.b as f64 / 255.0,
+            color.a as f64 / 255.0,
+        )
     }
 }

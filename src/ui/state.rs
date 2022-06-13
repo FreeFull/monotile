@@ -52,7 +52,7 @@ impl CanvasSurface {
 
     pub fn set_tile(&mut self, x: usize, y: usize, tile: Tile) {
         self.canvas.set_tile(x, y, tile);
-        let cr = cairo::Context::new(&self.surface);
+        let cr = cairo::Context::new(&self.surface).unwrap();
         self.tileset.draw_tile(&cr, x, y, &tile);
     }
 
@@ -61,22 +61,23 @@ impl CanvasSurface {
         self.redraw();
     }
 
-    pub fn draw(&self, cr: &cairo::Context) {
-        cr.save();
+    pub fn draw(&self, cr: &cairo::Context) -> Result<(), cairo::Error> {
+        cr.save()?;
         let pattern = cairo::SurfacePattern::create(&self.surface);
         pattern.set_filter(cairo::Filter::Nearest);
-        cr.set_source(&pattern);
-        cr.paint();
-        cr.restore();
+        cr.set_source(&pattern)?;
+        cr.paint()?;
+        cr.restore()?;
+        Ok(())
     }
 
     fn redraw(&self) {
-        let cr = cairo::Context::new(&self.surface);
+        let cr = cairo::Context::new(&self.surface).unwrap();
         let (width, height) = self.canvas.size();
         let (width, height) = (width as f64 * 8.0, height as f64 * 8.0);
         cr.set_source_rgb(0.0, 0.0, 0.0);
         cr.rectangle(0.0, 0.0, width as f64, height as f64);
-        cr.fill();
+        cr.fill().unwrap();
         for (x, y, tile) in self.canvas.tiles() {
             self.tileset.draw_tile(&cr, x, y, tile);
         }

@@ -3,10 +3,7 @@ use std::rc::Rc;
 use gtk;
 use gtk::prelude::*;
 
-use gdk::prelude::*;
 use gdk::{EventButton, EventMask, EventMotion, ModifierType};
-
-use gio::prelude::*;
 
 use crate::ui::state::{State, Tool};
 
@@ -25,7 +22,7 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
         let state = state.clone();
         move |_, cr| {
             cr.scale(SCALE, SCALE);
-            state.canvas_surface.borrow().draw(&cr);
+            state.canvas_surface.borrow().draw(&cr).unwrap();
             if let Some((x, y)) = state.canvas_cursor_position.borrow().clone() {
                 let tile = state.current_tile.borrow().clone();
                 state
@@ -58,10 +55,10 @@ pub fn build(state: &Rc<State>) -> gtk::DrawingArea {
 }
 
 fn pressed(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventButton) -> Inhibit {
-    let position = event.get_position();
-    let mut modifiers = event.get_state();
+    let position = event.position();
+    let mut modifiers = event.state();
     // The button doesn't get included in the state for EventButton
-    modifiers |= match event.get_button() {
+    modifiers |= match event.button() {
         1 => ModifierType::BUTTON1_MASK,
         2 => ModifierType::BUTTON2_MASK,
         3 => ModifierType::BUTTON3_MASK,
@@ -77,8 +74,8 @@ fn pressed(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventButton) -> I
 
 fn moved(area: &gtk::DrawingArea, state: &Rc<State>, event: &EventMotion) -> Inhibit {
     event.request_motions();
-    let position = event.get_position();
-    let modifiers = event.get_state();
+    let position = event.position();
+    let modifiers = event.state();
     if *state.current_tool.borrow() == Tool::Draw {
         draw(area, state, position, modifiers);
     }
@@ -110,7 +107,7 @@ fn draw(area: &gtk::DrawingArea, state: &Rc<State>, position: (f64, f64), modifi
         state.current_tile.replace(tile);
         state
             .window
-            .get_window()
+            .window()
             .map(|window| window.invalidate_rect(None, true));
     }
     let (max_x, max_y) = state.canvas_surface.borrow().canvas.size();

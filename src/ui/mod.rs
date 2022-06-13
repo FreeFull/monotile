@@ -1,7 +1,6 @@
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
-use gdk::WindowExt;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::{FileChooserAction, FileChooserNative, FileFilter, Orientation};
@@ -77,7 +76,7 @@ fn add_actions(state: &Rc<State>) {
             let app = app.clone();
             dialog.connect_response(move |dialog, resp| {
                 if resp == gtk::ResponseType::Accept {
-                    let files = dialog.get_files();
+                    let files = dialog.files();
                     if files.len() > 0 {
                         app.open(&files, "");
                     }
@@ -122,7 +121,7 @@ fn add_actions(state: &Rc<State>) {
             );
 
             if let Some(ref file) = *state.open_file.borrow() {
-                let file = gio::File::new_for_path(file);
+                let file = gio::File::for_path(file);
                 dialog.set_file(&file).ok();
             } else {
                 dialog.set_current_name("Untitled.monti");
@@ -138,11 +137,11 @@ fn add_actions(state: &Rc<State>) {
                 let state = state.clone();
                 move |dialog, resp| {
                     if resp == gtk::ResponseType::Accept {
-                        let files = dialog.get_files();
+                        let files = dialog.files();
                         if files.len() < 1 {
                             return;
                         }
-                        if let Some(path) = files[0].get_path() {
+                        if let Some(path) = files[0].path() {
                             let canvas = &state.canvas_surface.borrow().canvas;
                             match file_formats::save(&path, &canvas) {
                                 Ok(_) => {
@@ -175,7 +174,7 @@ fn add_actions(state: &Rc<State>) {
         move |_, _| {
             state
                 .window
-                .get_window()
+                .window()
                 .map(|window| window.invalidate_rect(None, true));
             state.modified.set(false);
             set_title(&state);
@@ -224,16 +223,14 @@ fn set_title(state: &Rc<State>) {
     }
     title.push('[');
     match *state.open_file.borrow() {
-        Some(ref file) => {
-            match file.file_name() {
-                Some(name) => {
-                    title.push_str(&name.to_string_lossy());
-                }
-                None => {
-                    eprintln!("Warning: file path ends in ..");
-                }
+        Some(ref file) => match file.file_name() {
+            Some(name) => {
+                title.push_str(&name.to_string_lossy());
             }
-        }
+            None => {
+                eprintln!("Warning: file path ends in ..");
+            }
+        },
         None => {
             title.push_str("Untitled");
         }
@@ -268,7 +265,7 @@ pub fn build(app: &gtk::Application) {
     app.connect_open({
         let state = state.clone();
         move |app, files, _hint| {
-            let path = files[0].get_path().expect("get_path failed");
+            let path = files[0].path().expect("get_path failed");
             match file_formats::load(&path) {
                 Ok(canvas) => {
                     state.canvas_surface.borrow_mut().set_canvas(canvas);

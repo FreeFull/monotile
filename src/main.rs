@@ -12,8 +12,8 @@ fn main() {
     let app = gtk::Application::new(
         Some("com.github.freefull.monotile"),
         ApplicationFlags::HANDLES_OPEN | ApplicationFlags::NON_UNIQUE,
-    ).unwrap();
+    );
     app.connect_startup(ui::build);
     app.connect_activate(|_| ());
-    app.run(&std::env::args().collect::<Vec<_>>());
+    app.run();
 }

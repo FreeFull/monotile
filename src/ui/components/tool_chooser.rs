@@ -5,8 +5,8 @@ use std::rc::Rc;
 use gtk::prelude::*;
 use gtk::{self, AccelFlags, AccelGroup, Image, Orientation, RadioButton};
 
-use gdk::ModifierType;
 use gdk::keys::constants as key;
+use gdk::ModifierType;
 
 pub fn build(state: &Rc<State>) -> gtk::Box {
     let icon_size = gtk::IconSize::LargeToolbar.into();
@@ -17,7 +17,7 @@ pub fn build(state: &Rc<State>) -> gtk::Box {
     draw.set_image(Some(&draw_icon));
     draw.set_always_show_image(true);
     draw.set_tooltip_markup(Some("Draw <b>R</b>"));
-    draw.set_property_draw_indicator(false);
+    draw.set_draw_indicator(false);
     draw.connect_clicked({
         let state = state.clone();
         move |_| {
@@ -26,7 +26,7 @@ pub fn build(state: &Rc<State>) -> gtk::Box {
     });
     let flood = RadioButton::from_widget(&draw);
     let flood_icon = Image::from_icon_name(Some("edit-clear-all-symbolic"), icon_size);
-    flood.set_property_draw_indicator(false);
+    flood.set_draw_indicator(false);
     flood.set_label("Flood fill");
     flood.set_image(Some(&flood_icon));
     flood.set_always_show_image(true);
