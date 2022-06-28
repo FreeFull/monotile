@@ -1,7 +1,5 @@
 use std::default::Default;
 
-use gdk;
-
 #[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Canvas {
     width: usize,
@@ -129,31 +127,5 @@ impl Color {
     pub fn to_argb(&self) -> u32 {
         let (r, g, b, a) = (self.r as u32, self.g as u32, self.b as u32, self.a as u32);
         (a << 24) | (r << 16) | (g << 8) | b
-    }
-}
-
-impl From<gdk::RGBA> for Color {
-    fn from(mut rgba: gdk::RGBA) -> Color {
-        rgba.set_red(rgba.red().clamp(0.0, 1.0));
-        rgba.set_green(rgba.green().clamp(0.0, 1.0));
-        rgba.set_blue(rgba.blue().clamp(0.0, 1.0));
-        rgba.set_alpha(rgba.alpha().clamp(0.0, 1.0));
-        Color {
-            r: (rgba.red() * 255.0) as u8,
-            g: (rgba.green() * 255.0) as u8,
-            b: (rgba.blue() * 255.0) as u8,
-            a: (rgba.alpha() * 255.0) as u8,
-        }
-    }
-}
-
-impl From<Color> for gdk::RGBA {
-    fn from(color: Color) -> gdk::RGBA {
-        gdk::RGBA::new(
-            color.r as f64 / 255.0,
-            color.g as f64 / 255.0,
-            color.b as f64 / 255.0,
-            color.a as f64 / 255.0,
-        )
     }
 }
