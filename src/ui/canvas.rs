@@ -2,7 +2,7 @@ use std::default::Default;
 
 use vizia::prelude::Data;
 
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Clone, Data, Debug, PartialEq, PartialOrd)]
 pub struct Canvas {
     width: usize,
     height: usize,

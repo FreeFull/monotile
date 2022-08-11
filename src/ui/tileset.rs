@@ -12,7 +12,7 @@ const DEFAULT_TILESET_IMAGE: &'static [u8] = include_bytes!("../../data/tiles.pn
 pub struct Tileset {
     pub image_data: image::DynamicImage,
     image_id: Cell<Option<vg::ImageId>>,
-    tile_size: (u8, u8),
+    pub tile_size: (u8, u8),
 }
 
 impl Tileset {
@@ -36,6 +36,21 @@ impl Tileset {
 
     pub fn image(&self) -> &image::DynamicImage {
         &self.image_data
+    }
+
+    pub fn tile_position(&self, index: u8) -> (usize, usize) {
+        let index = index as usize;
+        let tiles_per_line = self.image_data.width() as usize / self.tile_size.0 as usize;
+        let tile_x = index % tiles_per_line;
+        let tile_y = index / tiles_per_line;
+        if tile_y <= (self.image_data.height() as usize / self.tile_size.1 as usize) {
+            (
+                tile_x * self.tile_size.0 as usize,
+                tile_y * self.tile_size.1 as usize,
+            )
+        } else {
+            (0, 0)
+        }
     }
 }
 
