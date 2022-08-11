@@ -24,17 +24,15 @@ impl SaveData {
             .zip(self.foreground.iter())
             .zip(self.background.iter())
         {
-            let fg = Color::rgba(
+            let fg = Color::rgb(
                 (fg >> 16 & 0xFF) as u8,
                 (fg >> 8 & 0xFF) as u8,
                 (fg & 0xFF) as u8,
-                (fg >> 24 & 0xFF) as u8,
             );
-            let bg = Color::rgba(
+            let bg = Color::rgb(
                 (bg >> 16 & 0xFF) as u8,
                 (bg >> 8 & 0xFF) as u8,
                 (bg & 0xFF) as u8,
-                (bg >> 24 & 0xFF) as u8,
             );
             tiles.push(Tile { index, fg, bg });
         }

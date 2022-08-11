@@ -2,14 +2,13 @@
 name = "monotile"
 version = "0.1.0"
 authors = ["Filip Szczepański <jazz2rulez@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-image = "0.24.2"
-serde = "1.0.137"
-serde_json = "1.0.81"
-serde_derive = "1.0.137"
-rfd = "0.9.1"
+serde = "1.0.143"
+serde_json = "1.0.83"
+serde_derive = "1.0.143"
+rfd = "0.10.0"
 
 [dependencies.vizia]
 git = "https://github.com/vizia/vizia.git"

@@ -127,24 +127,9 @@ fn add_accelerators(cx: &mut Context) {
 }
 
 pub fn build(cx: &mut Context) {
-    State {
-        file_path: None,
-        file_name: None,
-        modified: false,
-        current_tile: Tile {
-            index: 0,
-            fg: Color::rgb(255, 255, 255),
-            bg: Color::rgb(0, 0, 0),
-        },
-        current_tool: state::Tool::Draw,
-        canvas: Canvas::new(32, 32),
-    }
-    .build(cx);
-
+    State::default().build(cx);
     add_accelerators(cx);
-
     build_menu(cx);
-
     HStack::new(cx, |cx| {
         drawing_area::build(cx);
         VStack::new(cx, |cx| {

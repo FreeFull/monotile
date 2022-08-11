@@ -1,12 +1,54 @@
-use std::fmt;
-
 use crate::ui::canvas::Tile;
+use std::cell::Cell;
+use std::convert::TryInto;
+use std::fmt;
+use vizia::image;
+use vizia::prelude::*;
+use vizia::vg;
 
-const TILESET_IMAGE: &'static [u8] = include_bytes!("../../data/tiles.gif");
-pub const WIDTH: u8 = 16;
-pub const HEIGHT: u8 = 16;
+const DEFAULT_TILESET_IMAGE: &'static [u8] = include_bytes!("../../data/tiles.png");
 
-pub struct Tileset {}
+#[derive(Clone, PartialEq)]
+pub struct Tileset {
+    pub image_data: image::DynamicImage,
+    image_id: Cell<Option<vg::ImageId>>,
+    tile_size: (u8, u8),
+}
+
+impl Tileset {
+    pub fn id(&self, canvas: &mut vg::Canvas<impl vg::Renderer>) -> vg::ImageId {
+        if self.image_id.get().is_none() {
+            let image_src: vg::ImageSource = (&self.image_data).try_into().unwrap();
+            self.image_id.set(Some(
+                canvas
+                    .create_image(
+                        image_src,
+                        vg::ImageFlags::REPEAT_X
+                            | vg::ImageFlags::REPEAT_Y
+                            | vg::ImageFlags::NEAREST,
+                    )
+                    .unwrap(),
+            ));
+        }
+        // image_id is always Some here
+        self.image_id.get().unwrap()
+    }
+
+    pub fn image(&self) -> &image::DynamicImage {
+        &self.image_data
+    }
+}
+
+impl Default for Tileset {
+    fn default() -> Self {
+        let image = image::load_from_memory(DEFAULT_TILESET_IMAGE).unwrap();
+        Tileset {
+            image_data: image,
+            image_id: Cell::new(None),
+            tile_size: (8, 8),
+        }
+    }
+}
 
 impl fmt::Debug for Tileset {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
@@ -14,16 +56,8 @@ impl fmt::Debug for Tileset {
     }
 }
 
-impl Tileset {
-    pub fn new() -> Tileset {
-        let image = image::load_from_memory(TILESET_IMAGE).unwrap();
-        Tileset {}
-    }
-
-    #[inline]
-    pub fn draw_tile(&self, x: usize, y: usize, tile: &Tile) {}
-
-    pub fn draw_tile_alpha(&self, x: usize, y: usize, tile: &Tile, alpha: f64) {
-        self.draw_tile(x, y, tile);
+impl Data for Tileset {
+    fn same(&self, other: &Self) -> bool {
+        self == other
     }
 }

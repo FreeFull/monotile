@@ -1,5 +1,7 @@
 use std::default::Default;
 
+use vizia::prelude::Data;
+
 #[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Canvas {
     width: usize,
@@ -90,7 +92,7 @@ impl Default for Canvas {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Data, Debug, PartialEq, PartialOrd)]
 pub struct Tile {
     pub index: u8,
     pub fg: Color,
@@ -101,31 +103,31 @@ impl Default for Tile {
     fn default() -> Tile {
         Tile {
             index: 32,
-            fg: Color::default(),
-            bg: Color::default(),
+            fg: Color::rgb(255, 255, 255),
+            bg: Color::rgb(0, 0, 0),
         }
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
+#[derive(Copy, Clone, Data, Debug, PartialEq, PartialOrd, Default)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
     pub b: u8,
-    pub a: u8,
 }
 
 impl Color {
     pub fn rgb(r: u8, g: u8, b: u8) -> Color {
-        Color { r, g, b, a: 255 }
+        Color { r, g, b }
     }
-
-    pub fn rgba(r: u8, g: u8, b: u8, a: u8) -> Color {
-        Color { r, g, b, a }
-    }
-
     pub fn to_argb(&self) -> u32 {
-        let (r, g, b, a) = (self.r as u32, self.g as u32, self.b as u32, self.a as u32);
-        (a << 24) | (r << 16) | (g << 8) | b
+        let (r, g, b) = (self.r as u32, self.g as u32, self.b as u32);
+        (0xFF << 24) | (r << 16) | (g << 8) | b
+    }
+}
+
+impl From<Color> for vizia::vg::Color {
+    fn from(color: Color) -> Self {
+        vizia::vg::Color::rgb(color.r, color.g, color.b)
     }
 }
