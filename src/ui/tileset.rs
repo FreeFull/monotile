@@ -1,4 +1,3 @@
-use crate::ui::canvas::Tile;
 use std::cell::Cell;
 use std::convert::TryInto;
 use std::fmt;

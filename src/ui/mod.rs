@@ -1,8 +1,9 @@
+use std::path::Path;
+
 use vizia::prelude::*;
 
 mod actions;
 mod canvas;
-use self::canvas::{Canvas, Color, Tile};
 mod views;
 use self::views::*;
 mod file_formats;
@@ -126,8 +127,8 @@ fn add_accelerators(cx: &mut Context) {
     .build(cx);
 }
 
-pub fn build(cx: &mut Context) {
-    State::default().build(cx);
+pub fn build(cx: &mut Context, file: Option<impl AsRef<Path>>) {
+    State::new(file).build(cx);
     add_accelerators(cx);
     build_menu(cx);
     HStack::new(cx, |cx| {
