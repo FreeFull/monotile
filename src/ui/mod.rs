@@ -136,6 +136,7 @@ pub fn build(cx: &mut Context) {
             tile_chooser::build(cx);
             color_chooser::build(cx);
             tool_chooser::build(cx);
-        });
+        })
+        .width(Units::Auto);
     });
 }
