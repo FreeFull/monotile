@@ -19,11 +19,14 @@ pub struct State {
 
 impl Model for State {
     fn event(&mut self, cx: &mut EventContext, event: &mut Event) {
-        event.map(|action: &Action, _| match action {
+        event.map(|action: &Action, _metadata| match action {
             Action::New => todo!(),
             Action::Save => save(self),
             Action::SaveAs => todo!(),
             Action::Load => todo!(),
+        });
+        event.map(|tool: &Tool, _metadata| {
+            self.current_tool = *tool;
         });
     }
 }
