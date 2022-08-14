@@ -15,7 +15,6 @@ fn main() {
     let app = Application::new(move |cx| {
         ui::build(cx, path.as_ref().map(|path| &**path));
     })
-    .title("Monotile")
     .min_inner_size(StaticLens::new(&Some((600, 600))));
     app.run();
 }

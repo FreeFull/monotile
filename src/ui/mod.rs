@@ -5,7 +5,7 @@ use vizia::prelude::*;
 mod actions;
 mod canvas;
 mod views;
-use self::views::*;
+use self::{actions::Action, views::*};
 mod file_formats;
 mod state;
 mod tileset;
@@ -128,7 +128,7 @@ fn add_accelerators(cx: &mut Context) {
 }
 
 pub fn build(cx: &mut Context, file: Option<impl AsRef<Path>>) {
-    State::new(file).build(cx);
+    State::new(file, cx);
     add_accelerators(cx);
     build_menu(cx);
     HStack::new(cx, |cx| {

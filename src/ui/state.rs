@@ -18,9 +18,9 @@ pub struct State {
 }
 
 impl State {
-    pub fn new(file: Option<impl AsRef<Path>>) -> State {
+    pub fn new(file: Option<impl AsRef<Path>>, cx: &mut Context) {
         use super::file_formats;
-        match (move || -> std::io::Result<State> {
+        let state = match (move || -> std::io::Result<State> {
             if let Some(path) = file {
                 let path = path.as_ref();
                 let canvas = file_formats::load(&path)?;
@@ -37,17 +37,34 @@ impl State {
         })() {
             Ok(val) => val,
             Err(_) => State::default(),
-        }
+        };
+        cx.emit(WindowEvent::SetTitle(state.title()));
+        state.build(cx);
+    }
+
+    pub fn title(&self) -> String {
+        format!(
+            "Monotile - {}{}",
+            if self.modified { "*" } else { "" },
+            if let Some(ref name) = self.file_name {
+                name
+            } else {
+                "Untitled"
+            }
+        )
     }
 }
 
 impl Model for State {
     fn event(&mut self, cx: &mut EventContext, event: &mut Event) {
-        event.map(|action: &Action, _metadata| match action {
-            Action::New => todo!(),
-            Action::Save => save(self),
-            Action::SaveAs => todo!(),
-            Action::Load => todo!(),
+        event.map(|action: &Action, _metadata| {
+            match action {
+                Action::New => todo!(),
+                Action::Save => save(self),
+                Action::SaveAs => todo!(),
+                Action::Load => todo!(),
+            };
+            cx.emit(WindowEvent::SetTitle(self.title()));
         });
         event.map(|tool: &Tool, _metadata| {
             self.current_tool = *tool;
