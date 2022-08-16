@@ -60,9 +60,38 @@ impl Model for State {
         event.map(|action: &Action, _metadata| {
             match action {
                 Action::New => todo!(),
-                Action::Save => save(self),
+                Action::Open => todo!(),
+                Action::Save => {
+                    save(self).ok();
+                }
                 Action::SaveAs => todo!(),
-                Action::Load => todo!(),
+                Action::Undo => todo!(),
+                Action::Redo => todo!(),
+                Action::Copy => todo!(),
+                Action::Cut => todo!(),
+                Action::Paste => todo!(),
+                Action::Help => todo!(),
+                Action::About => todo!(),
+                Action::TileUp => {
+                    self.current_tile.index =
+                        self.current_tile.index.saturating_sub(self.tileset.width);
+                }
+                Action::TileLeft => {
+                    self.current_tile.index = self.current_tile.index.saturating_sub(1);
+                }
+                Action::TileDown => {
+                    self.current_tile.index = self
+                        .current_tile
+                        .index
+                        .saturating_add(self.tileset.width)
+                        .min((self.tileset.width as u64 * self.tileset.height as u64 - 1) as u32);
+                }
+                Action::TileRight => {
+                    self.current_tile.index =
+                        self.current_tile.index.saturating_add(1).min(
+                            (self.tileset.width as u64 * self.tileset.height as u64 - 1) as u32,
+                        );
+                }
             };
             cx.emit(WindowEvent::SetTitle(self.title()));
         });

@@ -18,22 +18,22 @@ fn build_menu(cx: &mut Context) {
                 cx,
                 |cx| Label::new(cx, "File"),
                 |cx| {
-                    MenuButton::new_simple(cx, "New", |cx| cx.emit("app.new"));
-                    MenuButton::new_simple(cx, "Open", |cx| cx.emit("app.open"));
-                    MenuButton::new_simple(cx, "Save", |cx| cx.emit("app.save"));
-                    MenuButton::new_simple(cx, "Save as", |cx| cx.emit("app.saveas"));
-                    MenuButton::new_simple(cx, "Quit", |cx| cx.emit("app.quit"));
+                    MenuButton::new_simple(cx, "New", |cx| cx.emit(Action::New));
+                    MenuButton::new_simple(cx, "Open", |cx| cx.emit(Action::Open));
+                    MenuButton::new_simple(cx, "Save", |cx| cx.emit(Action::Save));
+                    MenuButton::new_simple(cx, "Save as", |cx| cx.emit(Action::SaveAs));
+                    MenuButton::new_simple(cx, "Quit", |cx| cx.emit(WindowEvent::WindowClose));
                 },
             );
             Menu::new(
                 cx,
                 |cx| Label::new(cx, "Edit"),
                 |cx| {
-                    MenuButton::new_simple(cx, "Undo", |cx| {});
-                    MenuButton::new_simple(cx, "Redo", |cx| {});
-                    MenuButton::new_simple(cx, "Cut", |cx| {});
-                    MenuButton::new_simple(cx, "Copy", |cx| {});
-                    MenuButton::new_simple(cx, "Paste", |cx| {});
+                    MenuButton::new_simple(cx, "Undo", |cx| cx.emit(Action::Undo));
+                    MenuButton::new_simple(cx, "Redo", |cx| cx.emit(Action::Redo));
+                    MenuButton::new_simple(cx, "Copy", |cx| cx.emit(Action::Copy));
+                    MenuButton::new_simple(cx, "Cut", |cx| cx.emit(Action::Cut));
+                    MenuButton::new_simple(cx, "Paste", |cx| cx.emit(Action::Paste));
                 },
             );
 
@@ -41,8 +41,8 @@ fn build_menu(cx: &mut Context) {
                 cx,
                 |cx| Label::new(cx, "Help"),
                 |cx| {
-                    MenuButton::new_simple(cx, "Monotile Help", |cx| {});
-                    MenuButton::new_simple(cx, "About Monotile", |cx| {});
+                    MenuButton::new_simple(cx, "Monotile Help", |cx| cx.emit(Action::Help));
+                    MenuButton::new_simple(cx, "About Monotile", |cx| cx.emit(Action::About));
                 },
             );
         });
@@ -54,74 +54,68 @@ fn add_accelerators(cx: &mut Context) {
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyN),
             KeymapEntry::new("app.new", |cx| {
-                println!("New file");
+                cx.emit(Action::New);
             }),
         ),
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyO),
-            KeymapEntry::new("app.open", |cx| {
-                println!("Open file");
-            }),
+            KeymapEntry::new("app.open", |cx| cx.emit(Action::Open)),
         ),
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyS),
-            KeymapEntry::new("app.save", |cx| {
-                println!("Save file");
-            }),
+            KeymapEntry::new("app.save", |cx| cx.emit(Action::Save)),
         ),
         (
             KeyChord::new(Modifiers::CTRL | Modifiers::SHIFT, Code::KeyS),
-            KeymapEntry::new("app.saveas", |cx| {
-                println!("Save file as");
-            }),
+            KeymapEntry::new("app.saveas", |cx| cx.emit(Action::SaveAs)),
         ),
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyQ),
-            KeymapEntry::new("app.quit", |cx| {
-                println!("Quit");
-            }),
+            KeymapEntry::new("app.quit", |cx| cx.emit(WindowEvent::WindowClose)),
         ),
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyZ),
-            KeymapEntry::new("app.undo", |cx| {
-                println!("Undo");
-            }),
+            KeymapEntry::new("app.undo", |cx| cx.emit(Action::Undo)),
         ),
         (
             KeyChord::new(Modifiers::CTRL | Modifiers::SHIFT, Code::KeyZ),
-            KeymapEntry::new("app.redo", |cx| {
-                println!("Redo");
-            }),
+            KeymapEntry::new("app.redo", |cx| cx.emit(Action::Redo)),
         ),
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyY),
-            KeymapEntry::new("app.redo", |cx| {
-                println!("Redo");
-            }),
-        ),
-        (
-            KeyChord::new(Modifiers::CTRL, Code::KeyX),
-            KeymapEntry::new("app.cut", |cx| {
-                println!("Cut");
-            }),
+            KeymapEntry::new("app.redo", |cx| cx.emit(Action::Redo)),
         ),
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyC),
-            KeymapEntry::new("app.copy", |cx| {
-                println!("Copy");
-            }),
+            KeymapEntry::new("app.copy", |cx| cx.emit(Action::Copy)),
+        ),
+        (
+            KeyChord::new(Modifiers::CTRL, Code::KeyX),
+            KeymapEntry::new("app.cut", |cx| cx.emit(Action::Cut)),
         ),
         (
             KeyChord::new(Modifiers::CTRL, Code::KeyV),
-            KeymapEntry::new("app.paste", |cx| {
-                println!("Paste");
-            }),
+            KeymapEntry::new("app.paste", |cx| cx.emit(Action::Paste)),
         ),
         (
             KeyChord::new(Modifiers::empty(), Code::F1),
-            KeymapEntry::new("app.help", |cx| {
-                println!("Help");
-            }),
+            KeymapEntry::new("app.help", |cx| cx.emit(Action::Help)),
+        ),
+        (
+            KeyChord::new(Modifiers::empty(), Code::KeyW),
+            KeymapEntry::new("app.w", |cx| cx.emit(Action::TileUp)),
+        ),
+        (
+            KeyChord::new(Modifiers::empty(), Code::KeyA),
+            KeymapEntry::new("app.w", |cx| cx.emit(Action::TileLeft)),
+        ),
+        (
+            KeyChord::new(Modifiers::empty(), Code::KeyS),
+            KeymapEntry::new("app.w", |cx| cx.emit(Action::TileDown)),
+        ),
+        (
+            KeyChord::new(Modifiers::empty(), Code::KeyD),
+            KeymapEntry::new("app.w", |cx| cx.emit(Action::TileRight)),
         ),
     ])
     .build(cx);

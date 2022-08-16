@@ -94,7 +94,7 @@ impl Default for Canvas {
 
 #[derive(Copy, Clone, Data, Debug, PartialEq, PartialOrd)]
 pub struct Tile {
-    pub index: u8,
+    pub index: u32,
     pub fg: Color,
     pub bg: Color,
 }

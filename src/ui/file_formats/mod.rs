@@ -10,7 +10,7 @@ use super::canvas::{Canvas, Color, Tile};
 pub struct SaveData {
     pub width: usize,
     pub height: usize,
-    pub tiles: Vec<u8>,
+    pub tiles: Vec<u32>,
     pub foreground: Vec<u32>,
     pub background: Vec<u32>,
 }
