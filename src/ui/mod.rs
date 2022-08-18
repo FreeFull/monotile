@@ -22,7 +22,9 @@ fn build_menu(cx: &mut Context) {
                     MenuButton::new_simple(cx, "Open", |cx| cx.emit(Action::Open));
                     MenuButton::new_simple(cx, "Save", |cx| cx.emit(Action::Save));
                     MenuButton::new_simple(cx, "Save as", |cx| cx.emit(Action::SaveAs));
-                    MenuButton::new_simple(cx, "Quit", |cx| cx.emit(WindowEvent::WindowClose));
+                    MenuButton::new_simple(cx, "Quit", |cx| {
+                        todo!("Vizia doesn't have a way of breaking its event loop yet.");
+                    });
                 },
             );
             Menu::new(

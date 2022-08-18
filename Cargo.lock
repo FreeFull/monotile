@@ -64,15 +64,15 @@ checksum = "0d8c1fef690941d3e7788d328517591fecc684c084084702d6ff1641e993699a"
 
 [[package]]
 name = "bumpalo"
-version = "3.10.0"
+version = "3.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37ccbd214614c6783386c1af30caf03192f17891059cecc394b4fb119e363de3"
+checksum = "c1ad822118d20d2c234f427000d5acc36eabe1e29a348c89b63dd60b13f28e5d"
 
 [[package]]
 name = "bytemuck"
-version = "1.11.0"
+version = "1.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5377c8865e74a160d21f29c2d40669f53286db6eab59b88540cbb12ffc8b835"
+checksum = "2f5715e491b5a1598fc2bef5a606847b5dc1d48ea625bd3c02c00de8285591da"
 
 [[package]]
 name = "byteorder"
@@ -420,6 +420,12 @@ checksum = "bde03329ae10e79ede66c9ce4dc930aa8599043b0743008548680f25b91502d6"
 dependencies = [
  "dtoa",
 ]
+
+[[package]]
+name = "emath"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c223f58c7e38abe1770f367b969f1b3fbd4704b67666bcb65dbb1adb0980ba72"
 
 [[package]]
 name = "femtovg"
@@ -816,9 +822,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.129"
+version = "0.2.132"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64de3cc433455c14174d42e554d4027ee631c4d046d43e3ecc6efc4636cdc7a7"
+checksum = "8371e4e5341c3a96db127eb2465ac681ced4c433e01dd0e938adbef26ba93ba5"
 
 [[package]]
 name = "libloading"
@@ -887,9 +893,9 @@ dependencies = [
 
 [[package]]
 name = "memmap2"
-version = "0.5.5"
+version = "0.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a79b39c93a7a5a27eeaf9a23b5ff43f1b9e0ad6b1cdd441140ae53c35613fc7"
+checksum = "95af15f345b17af2efc8ead6080fb8bc376f8cec1b35277b935637595fe77498"
 dependencies = [
  "libc",
 ]
@@ -934,6 +940,7 @@ dependencies = [
 name = "monotile"
 version = "0.1.0"
 dependencies = [
+ "emath",
  "rfd",
  "serde",
  "serde_derive",
@@ -1119,9 +1126,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.13.0"
+version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18a6dbe30758c9f83eb00cbea4ac95966305f5a7772f3f42ebfc7fc7eddbd8e1"
+checksum = "074864da206b4973b84eb91683020dbefd6a8c3f0f38e054d93954e891935e4e"
 
 [[package]]
 name = "osmesa-sys"
@@ -1579,7 +1586,7 @@ dependencies = [
  "dlib",
  "lazy_static",
  "log",
- "memmap2 0.5.5",
+ "memmap2 0.5.7",
  "nix 0.24.2",
  "pkg-config",
  "wayland-client",
@@ -1767,7 +1774,7 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 [[package]]
 name = "vizia"
 version = "0.1.0"
-source = "git+https://github.com/vizia/vizia.git#c942bb5967f44fdaf4833aeec6dd780377149c72"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
 dependencies = [
  "vizia_core",
  "vizia_winit",
@@ -1776,7 +1783,7 @@ dependencies = [
 [[package]]
 name = "vizia_core"
 version = "0.1.0"
-source = "git+https://github.com/vizia/vizia.git#c942bb5967f44fdaf4833aeec6dd780377149c72"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
 dependencies = [
  "bitflags",
  "copypasta",
@@ -1788,20 +1795,23 @@ dependencies = [
  "fnv",
  "image",
  "instant",
- "keyboard-types",
  "morphorm",
  "sys-locale",
  "unic-langid",
  "unicode-bidi",
  "unicode-segmentation",
  "vizia_derive",
+ "vizia_id",
+ "vizia_input",
+ "vizia_storage",
+ "vizia_window",
  "web-sys",
 ]
 
 [[package]]
 name = "vizia_derive"
 version = "0.1.0"
-source = "git+https://github.com/vizia/vizia.git#c942bb5967f44fdaf4833aeec6dd780377149c72"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1809,15 +1819,50 @@ dependencies = [
 ]
 
 [[package]]
+name = "vizia_id"
+version = "0.1.0"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
+
+[[package]]
+name = "vizia_input"
+version = "0.1.0"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
+dependencies = [
+ "bitflags",
+ "keyboard-types",
+ "vizia_id",
+]
+
+[[package]]
+name = "vizia_storage"
+version = "0.1.0"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
+dependencies = [
+ "morphorm",
+ "vizia_id",
+]
+
+[[package]]
+name = "vizia_window"
+version = "0.1.0"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
+dependencies = [
+ "morphorm",
+ "vizia_input",
+]
+
+[[package]]
 name = "vizia_winit"
 version = "0.1.0"
-source = "git+https://github.com/vizia/vizia.git#c942bb5967f44fdaf4833aeec6dd780377149c72"
+source = "git+https://github.com/vizia/vizia.git#bf9647aeb6f5a0077c4539965af689c124734764"
 dependencies = [
  "console_error_panic_hook",
  "femtovg",
  "glutin",
- "keyboard-types",
  "vizia_core",
+ "vizia_id",
+ "vizia_input",
+ "vizia_window",
  "wasm-bindgen",
  "web-sys",
  "winit",

@@ -1,3 +1,4 @@
+use emath::*;
 use std::cell::Cell;
 use std::convert::TryInto;
 use std::fmt;
@@ -13,7 +14,7 @@ pub struct Tileset {
     image_id: Cell<Option<vg::ImageId>>,
     pub width: u32,
     pub height: u32,
-    pub tile_size: (u8, u8),
+    pub tile_size: Vec2,
 }
 
 impl Tileset {
@@ -39,17 +40,17 @@ impl Tileset {
         &self.image_data
     }
 
-    pub fn tile_position(&self, index: u32) -> (usize, usize) {
+    pub fn tile_position(&self, index: u32) -> Pos2 {
         let index = index as usize;
         let tile_x = index % (self.width as usize);
         let tile_y = index / (self.width as usize);
         if tile_y <= self.height as usize {
-            (
-                tile_x * self.tile_size.0 as usize,
-                tile_y * self.tile_size.1 as usize,
-            )
+            Pos2 {
+                x: tile_x as f32 * self.tile_size.x,
+                y: tile_y as f32 * self.tile_size.y,
+            }
         } else {
-            (0, 0)
+            Pos2 { x: 0.0, y: 0.0 }
         }
     }
 }
@@ -62,7 +63,7 @@ impl Default for Tileset {
             image_id: Cell::new(None),
             width: 16,
             height: 16,
-            tile_size: (8, 8),
+            tile_size: Vec2 { x: 8.0, y: 8.0 },
         }
     }
 }

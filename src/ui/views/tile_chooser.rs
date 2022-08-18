@@ -54,7 +54,7 @@ impl View for TileChooser {
             canvas.translate(1.0, 1.0);
 
             let tileset = &cx.data::<State>().unwrap().tileset;
-            let current_tile = cx.data::<State>().unwrap().current_tile;
+            let current_tile = self.current_tile;
             let tileset_id = tileset.id(canvas);
             let width = tileset.image().width() as f32;
             let height = tileset.image().height() as f32;
@@ -77,10 +77,10 @@ impl View for TileChooser {
 
             let mut path = vg::Path::new();
             path.rect(
-                -0.5 + tileset.tile_position(current_tile.index).0 as f32,
-                -0.5 + tileset.tile_position(current_tile.index).1 as f32,
-                tileset.tile_size.0 as f32 + 1.0,
-                tileset.tile_size.1 as f32 + 1.0,
+                -0.5 + tileset.tile_position(current_tile.index).x,
+                -0.5 + tileset.tile_position(current_tile.index).y,
+                tileset.tile_size.x as f32 + 1.0,
+                tileset.tile_size.y as f32 + 1.0,
             );
             canvas.stroke_path(&mut path, vg::Paint::color(vg::Color::rgb(255, 0, 0)));
             canvas.flush();
