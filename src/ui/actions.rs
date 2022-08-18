@@ -20,6 +20,7 @@ pub enum Action {
     TileLeft,
     TileDown,
     TileRight,
+    TileIndex(u32),
 }
 
 pub fn save(state: &mut State) -> io::Result<()> {

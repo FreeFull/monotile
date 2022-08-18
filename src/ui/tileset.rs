@@ -53,6 +53,13 @@ impl Tileset {
             Pos2 { x: 0.0, y: 0.0 }
         }
     }
+
+    pub fn index_from_position(&self, pos: Pos2) -> u32 {
+        let pos = pos.to_vec2() / self.tile_size;
+        let x = (pos.x as u32).clamp(0, self.width - 1);
+        let y = (pos.y as u32).clamp(0, self.height - 1);
+        x + y * self.width
+    }
 }
 
 impl Default for Tileset {

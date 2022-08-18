@@ -1,6 +1,8 @@
+use emath::Pos2;
 use vizia::prelude::*;
 use vizia::vg;
 
+use crate::ui::actions::Action;
 use crate::ui::{canvas::Tile, State};
 
 const SCALE: f32 = 2.0;
@@ -34,7 +36,24 @@ impl View for TileChooser {
         Some("tilechooser")
     }
 
-    fn event(&mut self, cx: &mut EventContext, event: &mut Event) {}
+    fn event(&mut self, cx: &mut EventContext, event: &mut Event) {
+        event.map(|event: &WindowEvent, _| match event {
+            WindowEvent::MouseDown(MouseButton::Left)
+            | WindowEvent::TriggerDown { mouse: true }
+            | WindowEvent::MouseMove(_, _) => {
+                if cx.mouse.left.state == MouseButtonState::Pressed {
+                    let entity = cx.current();
+                    let bbox = cx.cache.get_bounds(entity);
+                    let x = (cx.mouse.cursorx - bbox.x - SCALE) / SCALE;
+                    let y = (cx.mouse.cursory - bbox.y - SCALE) / SCALE;
+                    let state = cx.data::<State>().unwrap();
+                    let index = state.tileset.index_from_position(Pos2::new(x, y));
+                    cx.emit(Action::TileIndex(index));
+                }
+            }
+            _ => {}
+        });
+    }
 
     fn draw(&self, cx: &mut DrawContext, canvas: &mut vizia::view::Canvas) {
         canvas.save_with(|canvas| {

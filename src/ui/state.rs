@@ -92,6 +92,9 @@ impl Model for State {
                             (self.tileset.width as u64 * self.tileset.height as u64 - 1) as u32,
                         );
                 }
+                Action::TileIndex(index) => {
+                    self.current_tile.index = *index as u32;
+                }
             };
             cx.emit(WindowEvent::SetTitle(self.title()));
         });
