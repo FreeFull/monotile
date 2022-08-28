@@ -1,8 +1,8 @@
 use emath::*;
+use image::Pixel;
 use std::cell::Cell;
 use std::convert::TryInto;
 use std::fmt;
-use vizia::image;
 use vizia::prelude::*;
 use vizia::vg;
 
@@ -64,7 +64,21 @@ impl Tileset {
 
 impl Default for Tileset {
     fn default() -> Self {
-        let image = image::load_from_memory(DEFAULT_TILESET_IMAGE).unwrap();
+        let mut image = image::load_from_memory(DEFAULT_TILESET_IMAGE)
+            .unwrap()
+            .into_rgba8();
+        for pixel in image.pixels_mut() {
+            // Convert into a transparent mask.
+            pixel.0 = [
+                255,
+                255,
+                255,
+                // Greyscale value, with premultiplied alpha.
+                ((pixel.to_luma().0[0] as u16 * pixel.0[3] as u16) >> 8) as u8,
+            ];
+        }
+        let image = image.into();
+
         Tileset {
             image_data: image,
             image_id: Cell::new(None),

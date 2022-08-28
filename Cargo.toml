@@ -5,11 +5,12 @@ authors = ["Filip Szczepański <jazz2rulez@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-serde = "1.0.143"
-serde_json = "1.0.83"
-serde_derive = "1.0.143"
+serde = "1.0.144"
+serde_json = "1.0.85"
+serde_derive = "1.0.144"
 rfd = "0.10.0"
-emath = "0.18.0"
+emath = "0.19.0"
+image = "0.24.0"
 
 [dependencies.vizia]
 git = "https://github.com/vizia/vizia.git"
