@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use vizia::prelude::*;
 
 use super::actions::*;
+use super::canvas;
 use super::canvas::{Canvas, Tile};
 use super::tileset::Tileset;
 
@@ -101,6 +102,7 @@ impl Model for State {
         event.map(|tool: &Tool, _metadata| {
             self.current_tool = *tool;
         });
+        event.map(|action: &canvas::Action, _| self.canvas.handle_action(*action));
     }
 }
 

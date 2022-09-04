@@ -84,6 +84,13 @@ impl Canvas {
         assert_eq!(tiles.len(), self.width * self.height);
         self.tiles = tiles;
     }
+
+    pub fn handle_action(&mut self, action: Action) {
+        match action {
+            Action::SetTile { x, y, tile } => self.set_tile(x, y, tile),
+            Action::FloodFill { x, y, tile } => self.flood_fill(x, y, tile),
+        }
+    }
 }
 
 impl Default for Canvas {
@@ -130,4 +137,10 @@ impl From<Color> for vizia::vg::Color {
     fn from(color: Color) -> Self {
         vizia::vg::Color::rgb(color.r, color.g, color.b)
     }
+}
+
+#[derive(Copy, Clone, Debug)]
+pub enum Action {
+    SetTile { x: usize, y: usize, tile: Tile },
+    FloodFill { x: usize, y: usize, tile: Tile },
 }
