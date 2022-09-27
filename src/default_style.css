@@ -1,0 +1,36 @@
+:root {
+    background-color: #7b8193;
+}
+
+.dialog-background {
+    background-color: #00000088;
+}
+
+.dialog {
+    background-color: #c0c3cd;
+    child-space: 10px;
+    border-width: 2px;
+    border-color: #f17d7dff;
+    border-radius: 5px;
+    width: auto;
+    height: auto;
+    space: 1s;
+}
+
+.dialog>label {
+    space: 1s;
+    top: 10px;
+    bottom: 10px;
+}
+
+.dialog button {
+    space: 5px;
+}
+
+.dialog .confirm {
+    background-color: #7be07b;
+}
+
+.dialog .danger {
+    background-color: #f17d7d;
+}

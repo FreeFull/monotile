@@ -7,6 +7,10 @@ use super::canvas;
 use super::canvas::{Canvas, Tile};
 use super::tileset::Tileset;
 
+pub fn build(file: Option<impl AsRef<Path>>, cx: &mut Context) {
+    State::new(file, cx);
+}
+
 #[derive(Debug, Lens, Default)]
 pub struct State {
     pub file_path: Option<PathBuf>,
@@ -63,9 +67,17 @@ impl Model for State {
                 Action::New => todo!(),
                 Action::Open => todo!(),
                 Action::Save => {
-                    save(self).ok();
+                    let _ = save(self);
+                    cx.emit(WindowEvent::SetTitle(self.title()));
                 }
                 Action::SaveAs => todo!(),
+                Action::Quit => {
+                    if !self.modified {
+                        std::process::exit(0);
+                    } else {
+                        cx.emit(super::dialogs::StateSetter::Quit(true));
+                    }
+                }
                 Action::Undo => todo!(),
                 Action::Redo => todo!(),
                 Action::Copy => todo!(),
@@ -102,7 +114,19 @@ impl Model for State {
         event.map(|tool: &Tool, _metadata| {
             self.current_tool = *tool;
         });
-        event.map(|action: &canvas::Action, _| self.canvas.handle_action(*action));
+        event.map(|action: &canvas::Action, _| {
+            self.canvas.handle_action(*action);
+            self.modified = true;
+            cx.emit(WindowEvent::SetTitle(self.title()));
+        });
+        event.map(|message: &WindowEvent, meta| match *message {
+            WindowEvent::WindowClose => {
+                println!("Window close detected!");
+                meta.consume();
+                //cx.emit(Action::Quit);
+            }
+            _ => {}
+        });
     }
 }
 
