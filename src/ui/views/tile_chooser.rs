@@ -39,7 +39,7 @@ impl View for TileChooser {
     fn event(&mut self, cx: &mut EventContext, event: &mut Event) {
         event.map(|event: &WindowEvent, _| match event {
             WindowEvent::MouseDown(MouseButton::Left)
-            | WindowEvent::TriggerDown { mouse: true }
+            | WindowEvent::PressDown { mouse: true }
             | WindowEvent::MouseMove(_, _) => {
                 if cx.mouse.left.state == MouseButtonState::Pressed {
                     let entity = cx.current();
@@ -66,7 +66,7 @@ impl View for TileChooser {
 
             let mut path = vg::Path::new();
             path.rect(bounds.x, bounds.y, bounds.w, bounds.h);
-            canvas.fill_path(&mut path, vg::Paint::color(vg::Color::black()));
+            canvas.fill_path(&mut path, &vg::Paint::color(vg::Color::black()));
 
             canvas.translate(bounds.x, bounds.y);
             canvas.scale(SCALE, SCALE);
@@ -91,8 +91,8 @@ impl View for TileChooser {
             let mut path = vg::Path::new();
             path.rect(0.0, 0.0, width, height);
 
-            canvas.fill_path(&mut path, vg::Paint::color(current_tile.bg.into()));
-            canvas.fill_path(&mut path, tileset_paint);
+            canvas.fill_path(&mut path, &vg::Paint::color(current_tile.bg.into()));
+            canvas.fill_path(&mut path, &tileset_paint);
 
             let mut path = vg::Path::new();
             path.rect(
@@ -101,7 +101,7 @@ impl View for TileChooser {
                 tileset.tile_size.x as f32 + 1.0,
                 tileset.tile_size.y as f32 + 1.0,
             );
-            canvas.stroke_path(&mut path, vg::Paint::color(vg::Color::rgb(255, 0, 0)));
+            canvas.stroke_path(&mut path, &vg::Paint::color(vg::Color::rgb(255, 0, 0)));
             canvas.flush();
         });
     }

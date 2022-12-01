@@ -1,5 +1,5 @@
 use super::actions::Action;
-use vizia::prelude::*;
+use vizia::{modifiers::EventHandle, prelude::*};
 
 #[derive(Copy, Clone, Default, Lens, Model, Setter)]
 pub struct State {
@@ -9,7 +9,7 @@ pub struct State {
 
 pub fn build(cx: &mut Context) {
     State {
-        quit: true,
+        quit: false,
         color_picker: None,
     }
     .build(cx);
@@ -53,7 +53,7 @@ pub fn build(cx: &mut Context) {
         State::color_picker.map(|index| index.is_some()),
         |cx| cx.emit(StateSetter::ColorPicker(None)),
         |cx| {
-            VStack::new(cx, |_| {});
+            Label::new(cx, "Colour Picker");
         },
     );
 }
@@ -61,7 +61,7 @@ pub fn build(cx: &mut Context) {
 fn dialog(
     cx: &mut Context,
     lens: impl Lens<Target = bool>,
-    dismiss: fn(&mut EventContext),
+    dismiss: for<'a, 'b> fn(&mut EventHandle<'a, 'b, Element>),
     contents: impl Fn(&mut Context) + Copy + 'static,
 ) -> Handle<impl View> {
     Popup::new(cx, lens, true, move |cx| {

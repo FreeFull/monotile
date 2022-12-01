@@ -13,7 +13,7 @@ pub fn build(cx: &mut Context) {
                 let canvas_size = canvas.map(|canvas| canvas.size()).get(cx);
                 let tile_size = tileset.map(|tileset| tileset.tile_size).get(cx);
                 DrawingArea {}
-                    .build(cx, |cx| {})
+                    .build(cx, |_cx| {})
                     .width(Units::Pixels(canvas_size.0 as f32 * SCALE * tile_size.x))
                     .height(Units::Pixels(canvas_size.1 as f32 * SCALE * tile_size.y))
                     .right(Units::Pixels(16.0))
@@ -45,14 +45,14 @@ impl View for DrawingArea {
                     tile_size.x,
                     tile_size.y,
                 );
-                canvas.fill_path(&mut path, vg::Paint::color(tile.bg.into()));
+                canvas.fill_path(&mut path, &vg::Paint::color(tile.bg.into()));
                 let image_id = state.tileset.id(canvas);
                 canvas.fill_path(
                     &mut path,
-                    vg::Paint::image_tint(
+                    &vg::Paint::image_tint(
                         image_id,
-                        (x as f32 * tile_size.x - offset.x),
-                        (y as f32 * tile_size.y - offset.y),
+                        x as f32 * tile_size.x - offset.x,
+                        y as f32 * tile_size.y - offset.y,
                         state.tileset.image().width() as f32,
                         state.tileset.image().height() as f32,
                         0.0,
@@ -70,7 +70,7 @@ impl View for DrawingArea {
     fn event(&mut self, cx: &mut EventContext, event: &mut Event) {
         event.map(|event: &WindowEvent, _| match *event {
             WindowEvent::MouseDown(MouseButton::Left)
-            | WindowEvent::TriggerDown { mouse: true }
+            | WindowEvent::PressDown { mouse: true }
             | WindowEvent::MouseMove(_, _) => {
                 if cx.mouse.left.state == MouseButtonState::Pressed {
                     let entity = cx.current();

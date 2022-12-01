@@ -34,9 +34,6 @@ pub fn build(cx: &mut Context) {
                     MenuButton::new_simple(cx, "About Monotile", |cx| cx.emit(Action::About));
                 },
             );
-            MenuButton::new_simple(cx, "Test Quit Dialog", |cx| {
-                cx.emit(super::dialogs::StateSetter::Quit(true))
-            });
         });
     });
 }

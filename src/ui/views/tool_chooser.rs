@@ -3,7 +3,7 @@ use crate::ui::state::{State, Tool};
 use vizia::prelude::*;
 
 pub fn build(cx: &mut Context) {
-    let toolbar = HStack::new(cx, |cx| {
+    let _toolbar = HStack::new(cx, |cx| {
         HStack::new(cx, |cx| {
             RadioButton::new(cx, State::current_tool.map(|&tool| tool == Tool::Draw))
                 .on_press(|cx| cx.emit(Tool::Draw));

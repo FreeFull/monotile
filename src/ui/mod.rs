@@ -23,7 +23,6 @@ pub fn build(cx: &mut Context, file: Option<impl AsRef<Path>>) {
         drawing_area::build(cx);
         VStack::new(cx, |cx| {
             tile_chooser::build(cx);
-            color_chooser::build(cx);
             tool_chooser::build(cx);
         })
         .width(Units::Auto);
