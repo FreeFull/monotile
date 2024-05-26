@@ -1,0 +1,15 @@
+[package]
+name = "libmonotile"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+image.workspace = true
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.115"
+zip = "1.1.1"
+
+[dependencies.libcosmic]
+git = "https://github.com/pop-os/libcosmic"
+default-features = false
+optional = true
